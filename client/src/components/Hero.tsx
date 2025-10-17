@@ -26,11 +26,11 @@ export default function Hero({
       <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/40 to-background/80" />
       
       <div className="relative z-10 text-center px-4 max-w-5xl mx-auto">
-        <h1 className="font-serif text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-foreground mb-6">
+        <h1 className="font-serif text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-foreground mb-4">
           {title}
         </h1>
-        <div className="w-32 h-1 bg-primary mx-auto mb-6" />
-        <p className="font-montserrat text-xl sm:text-2xl md:text-3xl text-foreground/90 mb-8">
+        <div className="w-32 h-1 bg-primary mx-auto mb-4" />
+        <p className="font-montserrat text-xl sm:text-2xl md:text-3xl text-foreground/90 mb-6">
           {subtitle}
         </p>
         {ctaText && ctaAction && (

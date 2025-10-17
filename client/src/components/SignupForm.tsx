@@ -68,16 +68,16 @@ export default function SignupForm({ teamId, teamName }: SignupFormProps) {
   };
 
   return (
-    <div className="bg-card border border-primary/30 rounded-md p-8">
+    <div className="bg-card border border-primary/30 rounded-md p-6">
       <h3 className="font-serif text-3xl font-bold text-foreground mb-2">
         Join the {teamName}
       </h3>
-      <p className="text-muted-foreground mb-6">
+      <p className="text-muted-foreground mb-4">
         Fill out the form below to express your interest in joining our team.
       </p>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
             control={form.control}
             name="name"

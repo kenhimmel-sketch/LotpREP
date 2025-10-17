@@ -9,9 +9,9 @@ interface StatProps {
 
 function StatCard({ icon, value, label }: StatProps) {
   return (
-    <Card className="p-6 text-center border-primary/30 hover-elevate transition-all duration-300">
-      <div className="flex justify-center mb-3">
-        <div className="w-12 h-12 rounded-md bg-primary/10 flex items-center justify-center">
+    <Card className="p-4 text-center border-primary/30 hover-elevate transition-all duration-300">
+      <div className="flex justify-center mb-2">
+        <div className="w-10 h-10 rounded-md bg-primary/10 flex items-center justify-center">
           {icon}
         </div>
       </div>
@@ -34,12 +34,12 @@ interface TeamStatsProps {
 
 export default function TeamStats({ wins, players, championships, winRate }: TeamStatsProps) {
   return (
-    <div className="py-12 bg-card/50">
+    <div className="py-8 bg-card/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="font-serif text-4xl md:text-5xl font-bold text-foreground mb-4 text-center">
+        <h2 className="font-serif text-4xl md:text-5xl font-bold text-foreground mb-3 text-center">
           Team Statistics
         </h2>
-        <div className="w-24 h-1 bg-primary mx-auto mb-8" />
+        <div className="w-24 h-1 bg-primary mx-auto mb-6" />
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <StatCard

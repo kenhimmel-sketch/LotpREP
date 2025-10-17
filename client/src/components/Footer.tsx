@@ -4,10 +4,10 @@ import { Link } from "wouter";
 export default function Footer() {
   return (
     <footer className="bg-card border-t border-primary/20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="col-span-1 md:col-span-2">
-            <div className="flex items-center gap-3 mb-4">
+            <div className="flex items-center gap-3 mb-3">
               <Shield className="w-8 h-8 text-primary" />
               <span className="font-serif text-2xl font-bold text-primary">
                 Legends of the Park
@@ -19,7 +19,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h3 className="font-montserrat font-semibold text-foreground mb-4">Quick Links</h3>
+            <h3 className="font-montserrat font-semibold text-foreground mb-3">Quick Links</h3>
             <ul className="space-y-2">
               <li>
                 <Link href="/" className="text-sm text-muted-foreground hover:text-primary transition-colors" data-testid="link-footer-home">
@@ -40,8 +40,8 @@ export default function Footer() {
           </div>
 
           <div>
-            <h3 className="font-montserrat font-semibold text-foreground mb-4">Connect</h3>
-            <div className="flex gap-3">
+            <h3 className="font-montserrat font-semibold text-foreground mb-3">Connect</h3>
+            <div className="flex gap-2">
               <button className="w-9 h-9 rounded-md bg-primary/10 hover-elevate active-elevate-2 flex items-center justify-center" data-testid="button-facebook">
                 <Facebook className="w-4 h-4 text-primary" />
               </button>
@@ -55,7 +55,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-6 pt-6 border-t border-primary/20">
+        <div className="mt-4 pt-4 border-t border-primary/20">
           <p className="text-sm text-muted-foreground text-center">
             © {new Date().getFullYear()} Legends of the Park. All rights reserved.
           </p>
