@@ -17,9 +17,16 @@ const teamData = {
     parkImage: avengersActionImage,
     parkDescription: "Acacia Park stands as a verdant oasis in the heart of our community, featuring mature acacia trees that provide natural shade and beauty throughout the seasons.",
     parkHistory: "Established in 1985, Acacia Park has been a cornerstone of community gathering for nearly four decades. The park's distinctive acacia trees were planted by founding families and have grown alongside our neighborhood, creating a legacy of natural beauty and community spirit.",
+    parkFeatures: [
+      "Historic acacia tree grove",
+      "Community picnic areas",
+      "Children's playground",
+      "Walking trails through shaded paths"
+    ],
+    communityImpact: "Acacia Park serves as a gathering place for families, hosting annual community festivals and providing a natural retreat for residents. The championship prize would enhance our playground equipment and create new recreational facilities for our growing community.",
     colors: "Forest Green & Cream",
-    stats: { wins: "42", players: "18", championships: "3", winRate: "78%" },
-    teamInfo: "The Avengers embody the strength and resilience of the mighty acacia tree. Known for our defensive prowess and team unity, we've built a legacy of excellence on and off the field.",
+    stats: { wins: "0", players: "0", championships: "0", winRate: "0%" },
+    teamInfo: "The Avengers embody the strength and resilience of the mighty acacia tree. We're building a team that will represent our park with pride and compete for resources that will directly benefit our community.",
   },
   "discovery-park-defenders": {
     name: "Discovery Park Defenders",
@@ -28,9 +35,16 @@ const teamData = {
     parkImage: defendersPlayerImage,
     parkDescription: "Discovery Park offers expansive green spaces, modern recreational facilities, and a welcoming environment for families and athletes alike.",
     parkHistory: "Opened in 2005, Discovery Park represents our community's commitment to recreation and wellness. With state-of-the-art facilities and beautiful natural landscapes, it has become a hub for sports and family activities.",
+    parkFeatures: [
+      "Multi-use sports fields",
+      "Fitness stations and outdoor gym",
+      "Nature discovery center",
+      "Community event pavilion"
+    ],
+    communityImpact: "Discovery Park is the heart of youth sports and family recreation in our area. Winning the championship would fund new equipment, expanded programming, and scholarship opportunities for underprivileged youth in our community.",
     colors: "Royal Blue & Silver",
-    stats: { wins: "38", players: "20", championships: "2", winRate: "71%" },
-    teamInfo: "The Defenders are built on a foundation of strategic play and unwavering teamwork. We honor Discovery Park's spirit of exploration by constantly innovating our approach to the game.",
+    stats: { wins: "0", players: "0", championships: "0", winRate: "0%" },
+    teamInfo: "The Defenders are built on a foundation of strategic play and unwavering teamwork. We honor Discovery Park's spirit of exploration and innovation as we build our roster for the inaugural season.",
   },
   "sunset-park-scorpions": {
     name: "Sunset Park Scorpions",
@@ -39,9 +53,16 @@ const teamData = {
     parkImage: scorpionsImage,
     parkDescription: "Sunset Park captivates visitors with stunning evening vistas and vibrant community energy, making it a beloved gathering place for all generations.",
     parkHistory: "Since its dedication in 1992, Sunset Park has been renowned for its breathtaking sunset views and active community programs. The park serves as a symbol of unity and natural beauty in our region.",
+    parkFeatures: [
+      "Panoramic sunset viewing areas",
+      "Open-air amphitheater",
+      "Community gardens",
+      "Evening yoga and fitness programs"
+    ],
+    communityImpact: "Sunset Park brings our community together through cultural events, outdoor concerts, and wellness programs. Championship funds would expand our community garden, improve lighting for evening safety, and create a covered gathering space.",
     colors: "Crimson Red & Black",
-    stats: { wins: "45", players: "19", championships: "4", winRate: "82%" },
-    teamInfo: "The Scorpions strike with precision and speed, mirroring the intensity of a Nevada sunset. Our aggressive offensive strategy and fierce competitive spirit make us formidable opponents.",
+    stats: { wins: "0", players: "0", championships: "0", winRate: "0%" },
+    teamInfo: "The Scorpions represent the vibrant energy and competitive spirit of our sunset community. We're recruiting athletes who will fight for every yard and every dollar that benefits our park.",
   },
   "veterans-park-vipers": {
     name: "Veterans Park Vipers",
@@ -50,9 +71,16 @@ const teamData = {
     parkImage: avengersActionImage,
     parkDescription: "Veterans Memorial Park stands as a tribute to those who served, featuring memorial monuments, immaculate grounds, and a profound sense of honor and respect.",
     parkHistory: "Dedicated in 1978, Veterans Memorial Park honors the sacrifice and service of our nation's heroes. The park's solemn beauty and patriotic monuments remind us of the values of courage, dedication, and community.",
+    parkFeatures: [
+      "Memorial wall honoring local veterans",
+      "Ceremony grounds for remembrance events",
+      "Peaceful reflection gardens",
+      "Flag dedication area"
+    ],
+    communityImpact: "Veterans Memorial Park preserves the memory of those who served while providing a peaceful space for reflection and community gatherings. Championship funds would restore aging monuments, enhance memorial landscaping, and create educational displays honoring our heroes.",
     colors: "Navy Blue & Gold",
-    stats: { wins: "40", players: "17", championships: "3", winRate: "75%" },
-    teamInfo: "The Vipers play with honor, discipline, and pride, reflecting the values of Veterans Memorial Park. Our tactical precision and leadership on the field embody the spirit of service and excellence.",
+    stats: { wins: "0", players: "0", championships: "0", winRate: "0%" },
+    teamInfo: "The Vipers play with honor, discipline, and pride, reflecting the values of Veterans Memorial Park. Our team will compete with the same dedication and commitment shown by those we honor.",
   },
 };
 
@@ -85,6 +113,8 @@ export default function TeamPage() {
         parkDescription={team.parkDescription}
         parkImage={team.parkImage}
         parkHistory={team.parkHistory}
+        parkFeatures={team.parkFeatures}
+        communityImpact={team.communityImpact}
       />
 
       <section className="py-6 sm:py-8 bg-background">

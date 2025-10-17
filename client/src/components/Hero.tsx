@@ -17,13 +17,22 @@ export default function Hero({
   ctaAction,
   height = "min-h-[80vh]",
 }: HeroProps) {
+  const isHomepage = !backgroundImage || backgroundImage === 'solid-black';
+  
   return (
     <div className={`relative ${height} flex items-center justify-center overflow-hidden`}>
-      <div
-        className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: `url(${backgroundImage})` }}
-      />
-      <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/80" />
+      {!isHomepage && (
+        <>
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: `url(${backgroundImage})` }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/80" />
+        </>
+      )}
+      {isHomepage && (
+        <div className="absolute inset-0 bg-black" />
+      )}
       
       <div className="relative z-10 text-center px-4 max-w-5xl mx-auto">
         <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-foreground mb-3 sm:mb-4">

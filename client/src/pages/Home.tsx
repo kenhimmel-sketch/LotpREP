@@ -49,7 +49,7 @@ export default function Home() {
       <Hero
         title="Legends of the Park"
         subtitle="Nevada's Premier Flag Football League"
-        backgroundImage={logoImage}
+        backgroundImage="solid-black"
         ctaText="Become a Legend"
         ctaAction={scrollToTeams}
       />
