@@ -4,8 +4,8 @@ import { Link } from "wouter";
 export default function Footer() {
   return (
     <footer className="bg-card border-t border-primary/20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center gap-3 mb-4">
               <Shield className="w-8 h-8 text-primary" />
@@ -55,7 +55,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-8 pt-8 border-t border-primary/20">
+        <div className="mt-6 pt-6 border-t border-primary/20">
           <p className="text-sm text-muted-foreground text-center">
             © {new Date().getFullYear()} Legends of the Park. All rights reserved.
           </p>

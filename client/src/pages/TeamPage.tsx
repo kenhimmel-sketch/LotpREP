@@ -87,12 +87,12 @@ export default function TeamPage() {
         parkHistory={team.parkHistory}
       />
 
-      <section className="py-16 bg-background">
+      <section className="py-12 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="font-serif text-4xl md:text-5xl font-bold text-foreground mb-4 text-center">
             About the Team
           </h2>
-          <div className="w-24 h-1 bg-primary mx-auto mb-12" />
+          <div className="w-24 h-1 bg-primary mx-auto mb-8" />
 
           <Card className="p-8 border-primary/30 max-w-4xl mx-auto">
             <div className="text-center">
@@ -110,7 +110,7 @@ export default function TeamPage() {
 
       <TeamStats {...team.stats} />
 
-      <section id="signup" className="py-20 bg-background">
+      <section id="signup" className="py-12 bg-background">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <SignupForm teamId={slug} teamName={team.name} />
         </div>

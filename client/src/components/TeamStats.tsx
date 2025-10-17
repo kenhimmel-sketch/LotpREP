@@ -34,14 +34,14 @@ interface TeamStatsProps {
 
 export default function TeamStats({ wins, players, championships, winRate }: TeamStatsProps) {
   return (
-    <div className="py-16 bg-card/50">
+    <div className="py-12 bg-card/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 className="font-serif text-4xl md:text-5xl font-bold text-foreground mb-4 text-center">
           Team Statistics
         </h2>
-        <div className="w-24 h-1 bg-primary mx-auto mb-12" />
+        <div className="w-24 h-1 bg-primary mx-auto mb-8" />
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <StatCard
             icon={<Trophy className="w-6 h-6 text-primary" />}
             value={wins}

@@ -50,17 +50,17 @@ export default function Home() {
         ctaAction={scrollToTeams}
       />
 
-      <section id="teams" className="py-20 bg-background">
+      <section id="teams" className="py-12 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="font-serif text-4xl md:text-5xl font-bold text-foreground mb-4 text-center">
             Our Teams
           </h2>
           <div className="w-24 h-1 bg-primary mx-auto mb-4" />
-          <p className="text-center text-muted-foreground mb-12 max-w-3xl mx-auto">
+          <p className="text-center text-muted-foreground mb-10 max-w-3xl mx-auto">
             Each team represents and honors a local Nevada park, building community pride through athletic excellence and sportsmanship.
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {teams.map((team) => (
               <TeamCard key={team.slug} {...team} />
             ))}
@@ -68,14 +68,14 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-20 bg-card/50">
+      <section className="py-12 bg-card/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="font-serif text-4xl md:text-5xl font-bold text-foreground mb-6">
+            <h2 className="font-serif text-4xl md:text-5xl font-bold text-foreground mb-4">
               Join the Legend
             </h2>
-            <div className="w-24 h-1 bg-primary mx-auto mb-8" />
-            <p className="text-lg text-foreground/80 leading-relaxed mb-8">
+            <div className="w-24 h-1 bg-primary mx-auto mb-6" />
+            <p className="text-lg text-foreground/80 leading-relaxed mb-6">
               Legends of the Park is more than just a flag football league—it's a celebration of community, athleticism, and the natural beauty of Nevada's parks. Each team embodies the spirit and heritage of the park they represent, creating a unique bond between sport and place.
             </p>
             <p className="text-muted-foreground leading-relaxed">
