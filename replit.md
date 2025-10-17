@@ -6,6 +6,15 @@ Legends of the Park is a premium flag football league platform where teams repre
 
 ## Recent Changes
 
+**October 17, 2025 - Replit Authentication Integration**
+- Implemented Replit Auth (OpenID Connect) for user authentication
+- Added users and sessions tables to database schema
+- Created authentication middleware with token refresh and session management
+- Built frontend authentication flow with useAuth hook and protected routing
+- Landing page for logged-out users, Home page for authenticated users
+- Header displays user avatar and logout button when authenticated
+- All authentication endpoints tested and operational
+
 **October 17, 2025 - Supabase Database Integration**
 - Integrated Supabase PostgreSQL database for persistent data storage
 - Configured postgres.js driver with SSL enforcement for secure connections
@@ -39,9 +48,11 @@ Preferred communication style: Simple, everyday language.
 - Local component state with React hooks
 
 **Component Structure**
-- Reusable components: Header, Footer, Hero, TeamCard, TeamStats, ParkInfo, SignupForm
-- Page components: Home, TeamPage, NotFound
+- Reusable components: Header (with auth-aware avatar/logout), Footer, Hero, TeamCard, TeamStats, ParkInfo, SignupForm
+- Page components: Landing (logged-out), Home (logged-in), TeamPage, NotFound
 - UI components library from Radix UI primitives
+- Authentication: useAuth hook provides user state, isLoading, and isAuthenticated status
+- Protected routing: Landing page for unauthenticated, Home/Teams for authenticated users
 
 ### Backend Architecture
 
@@ -55,11 +66,24 @@ Preferred communication style: Simple, everyday language.
 - POST `/api/team-signups` - Create new team signup
 - GET `/api/team-signups/:teamId` - Retrieve signups by team
 
+**Authentication System**
+- Replit Auth (OpenID Connect) for user authentication
+- Session-based authentication with PostgreSQL session storage
+- Token refresh mechanism for long-lived sessions
+- Protected API routes with `isAuthenticated` middleware
+- Authentication endpoints:
+  - GET `/api/login` - Initiates OIDC login flow
+  - GET `/api/logout` - Initiates logout and session cleanup
+  - GET `/api/callback` - OIDC callback handler
+  - GET `/api/auth/user` - Returns authenticated user data
+
 **Middleware & Utilities**
 - Request/response logging with duration tracking
 - JSON body parsing
 - Error handling middleware with status code mapping
 - Development-only Vite integration for HMR
+- Authentication middleware with token refresh
+- Session management with secure cookie configuration
 
 ### Data Storage
 
@@ -69,9 +93,11 @@ Preferred communication style: Simple, everyday language.
 - Connection pooling with SSL requirement for production security
 
 **Schema Design**
-- `team_signups` table with fields: id (UUID), teamId, name, email, phone, experience, message
+- `users` table: id (UUID), email, firstName, lastName, profileImageUrl, createdAt, updatedAt
+- `sessions` table: sid (primary key), sess (jsonb), expire (timestamp) - for authentication
+- `team_signups` table: id (UUID), teamId, name, email, phone, experience, message
 - Zod schemas generated from Drizzle for runtime validation
-- Database migrations managed in `/migrations` directory
+- Database migrations managed with `npm run db:push`
 
 **Data Access Layer**
 - Storage abstraction pattern with `IStorage` interface
