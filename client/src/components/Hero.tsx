@@ -26,17 +26,18 @@ export default function Hero({
       <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/40 to-background/80" />
       
       <div className="relative z-10 text-center px-4 max-w-5xl mx-auto">
-        <h1 className="font-serif text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-foreground mb-4">
+        <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-foreground mb-3 sm:mb-4">
           {title}
         </h1>
-        <div className="w-32 h-1 bg-primary mx-auto mb-4" />
-        <p className="font-montserrat text-xl sm:text-2xl md:text-3xl text-foreground/90 mb-6">
+        <div className="w-24 sm:w-32 h-1 bg-primary mx-auto mb-3 sm:mb-4" />
+        <p className="font-montserrat text-lg sm:text-xl md:text-2xl lg:text-3xl text-foreground/90 mb-4 sm:mb-6">
           {subtitle}
         </p>
         {ctaText && ctaAction && (
           <Button
             onClick={ctaAction}
-            className="font-montserrat text-lg px-8 py-6 h-auto"
+            size="lg"
+            className="font-montserrat"
             data-testid="button-hero-cta"
           >
             {ctaText}

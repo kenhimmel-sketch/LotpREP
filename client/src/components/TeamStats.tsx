@@ -9,16 +9,16 @@ interface StatProps {
 
 function StatCard({ icon, value, label }: StatProps) {
   return (
-    <Card className="p-4 text-center border-primary/30 hover-elevate transition-all duration-300">
-      <div className="flex justify-center mb-2">
-        <div className="w-10 h-10 rounded-md bg-primary/10 flex items-center justify-center">
+    <Card className="p-3 sm:p-4 text-center border-primary/30 hover-elevate transition-all duration-300">
+      <div className="flex justify-center mb-1 sm:mb-2">
+        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-md bg-primary/10 flex items-center justify-center">
           {icon}
         </div>
       </div>
-      <div className="font-serif text-3xl font-bold text-primary mb-1" data-testid={`stat-value-${label.toLowerCase().replace(/\s+/g, '-')}`}>
+      <div className="font-serif text-2xl sm:text-3xl font-bold text-primary mb-1" data-testid={`stat-value-${label.toLowerCase().replace(/\s+/g, '-')}`}>
         {value}
       </div>
-      <div className="font-montserrat text-sm text-muted-foreground">
+      <div className="font-montserrat text-xs sm:text-sm text-muted-foreground">
         {label}
       </div>
     </Card>
@@ -34,14 +34,14 @@ interface TeamStatsProps {
 
 export default function TeamStats({ wins, players, championships, winRate }: TeamStatsProps) {
   return (
-    <div className="py-8 bg-card/50">
+    <div className="py-6 sm:py-8 bg-card/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="font-serif text-4xl md:text-5xl font-bold text-foreground mb-3 text-center">
+        <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-3 text-center">
           Team Statistics
         </h2>
-        <div className="w-24 h-1 bg-primary mx-auto mb-6" />
+        <div className="w-24 h-1 bg-primary mx-auto mb-4 sm:mb-6" />
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
           <StatCard
             icon={<Trophy className="w-6 h-6 text-primary" />}
             value={wins}
