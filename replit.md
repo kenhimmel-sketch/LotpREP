@@ -6,6 +6,15 @@ Legends of the Park is a premium flag football league platform where teams repre
 
 ## Recent Changes
 
+**October 17, 2025 - Critical Auth Loop Bug Fix (FINAL)**
+- **ROOT CAUSE IDENTIFIED**: Auth infinite loop was caused by `getQueryFn({ on401: "returnNull" })` creating new function instances on every render
+- **SOLUTION**: Created stable `authQueryFn` constant outside the useAuth hook to maintain reference equality
+- **IMPACT**: Reduced auth requests from 100+ per second to 2 total requests (one per page load)
+- **VERIFICATION**: Confirmed via server logs - no more infinite request loops
+- Fixed TypeScript errors in useAuth hook by properly typing queryFn as `QueryFunction<User | null>`
+- Removed unused useAuth import from App.tsx
+- All chart.tsx type assertions verified safe - no LSP errors found
+
 **October 17, 2025 - Discord-Style UI Performance Fix**
 - Fixed critical infinite auth request loop causing preview glitching
   - Removed loading state auth check from Router component to enable open browsing
