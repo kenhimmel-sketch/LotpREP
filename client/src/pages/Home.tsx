@@ -2,8 +2,11 @@ import Hero from "@/components/Hero";
 import TeamCard from "@/components/TeamCard";
 import { Button } from "@/components/ui/button";
 import { Trophy, Shield, Heart } from "lucide-react";
-import avengersImage from "@assets/3cc22e32-7360-464e-b72b-bddb6a57bd14_1760688198596.png";
+import avengersPlayerImage from "@assets/image_1760690520098.png";
+import defendersPlayerImage from "@assets/image_1760690503486.png";
+import logoImage from "@assets/image_1760690540758.png";
 import scorpionsImage from "@assets/86495af0-7d4a-4c62-a14d-d8f763c7cbe8_1760688171920.png";
+import avengersActionImage from "@assets/3cc22e32-7360-464e-b72b-bddb6a57bd14_1760688198596.png";
 
 export default function Home() {
   const scrollToTeams = () => {
@@ -14,14 +17,14 @@ export default function Home() {
     {
       name: "Acacia Park Avengers",
       park: "Acacia Park",
-      image: avengersImage,
+      image: avengersPlayerImage,
       colors: "Forest Green & Cream",
       slug: "acacia-park-avengers",
     },
     {
       name: "Discovery Park Defenders",
       park: "Discovery Park",
-      image: avengersImage,
+      image: defendersPlayerImage,
       colors: "Royal Blue & Silver",
       slug: "discovery-park-defenders",
     },
@@ -35,7 +38,7 @@ export default function Home() {
     {
       name: "Veterans Park Vipers",
       park: "Veterans Memorial Park",
-      image: avengersImage,
+      image: avengersActionImage,
       colors: "Navy Blue & Gold",
       slug: "veterans-park-vipers",
     },
@@ -46,7 +49,7 @@ export default function Home() {
       <Hero
         title="Legends of the Park"
         subtitle="Nevada's Premier Flag Football League"
-        backgroundImage={scorpionsImage}
+        backgroundImage={logoImage}
         ctaText="Become a Legend"
         ctaAction={scrollToTeams}
       />

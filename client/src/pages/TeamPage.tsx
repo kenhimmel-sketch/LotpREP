@@ -4,15 +4,17 @@ import ParkInfo from "@/components/ParkInfo";
 import TeamStats from "@/components/TeamStats";
 import SignupForm from "@/components/SignupForm";
 import { Card } from "@/components/ui/card";
-import avengersImage from "@assets/3cc22e32-7360-464e-b72b-bddb6a57bd14_1760688198596.png";
+import avengersPlayerImage from "@assets/image_1760690520098.png";
+import defendersPlayerImage from "@assets/image_1760690503486.png";
 import scorpionsImage from "@assets/86495af0-7d4a-4c62-a14d-d8f763c7cbe8_1760688171920.png";
+import avengersActionImage from "@assets/3cc22e32-7360-464e-b72b-bddb6a57bd14_1760688198596.png";
 
 const teamData = {
   "acacia-park-avengers": {
     name: "Acacia Park Avengers",
     park: "Acacia Park",
-    heroImage: avengersImage,
-    parkImage: avengersImage,
+    heroImage: avengersPlayerImage,
+    parkImage: avengersActionImage,
     parkDescription: "Acacia Park stands as a verdant oasis in the heart of our community, featuring mature acacia trees that provide natural shade and beauty throughout the seasons.",
     parkHistory: "Established in 1985, Acacia Park has been a cornerstone of community gathering for nearly four decades. The park's distinctive acacia trees were planted by founding families and have grown alongside our neighborhood, creating a legacy of natural beauty and community spirit.",
     colors: "Forest Green & Cream",
@@ -22,8 +24,8 @@ const teamData = {
   "discovery-park-defenders": {
     name: "Discovery Park Defenders",
     park: "Discovery Park",
-    heroImage: avengersImage,
-    parkImage: avengersImage,
+    heroImage: defendersPlayerImage,
+    parkImage: defendersPlayerImage,
     parkDescription: "Discovery Park offers expansive green spaces, modern recreational facilities, and a welcoming environment for families and athletes alike.",
     parkHistory: "Opened in 2005, Discovery Park represents our community's commitment to recreation and wellness. With state-of-the-art facilities and beautiful natural landscapes, it has become a hub for sports and family activities.",
     colors: "Royal Blue & Silver",
@@ -44,8 +46,8 @@ const teamData = {
   "veterans-park-vipers": {
     name: "Veterans Park Vipers",
     park: "Veterans Memorial Park",
-    heroImage: avengersImage,
-    parkImage: avengersImage,
+    heroImage: avengersActionImage,
+    parkImage: avengersActionImage,
     parkDescription: "Veterans Memorial Park stands as a tribute to those who served, featuring memorial monuments, immaculate grounds, and a profound sense of honor and respect.",
     parkHistory: "Dedicated in 1978, Veterans Memorial Park honors the sacrifice and service of our nation's heroes. The park's solemn beauty and patriotic monuments remind us of the values of courage, dedication, and community.",
     colors: "Navy Blue & Gold",

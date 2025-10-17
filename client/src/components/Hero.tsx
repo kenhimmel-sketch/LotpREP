@@ -23,7 +23,7 @@ export default function Hero({
         className="absolute inset-0 bg-cover bg-center"
         style={{ backgroundImage: `url(${backgroundImage})` }}
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/40 to-background/80" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/80" />
       
       <div className="relative z-10 text-center px-4 max-w-5xl mx-auto">
         <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-foreground mb-3 sm:mb-4">
