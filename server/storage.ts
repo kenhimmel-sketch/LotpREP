@@ -5,9 +5,15 @@ import {
   users,
   type User,
   type UpsertUser,
+  userProfiles,
+  type UserProfile,
+  type InsertUserProfile,
+  parkStats,
+  type ParkStats,
+  type InsertParkStats,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, or } from "drizzle-orm";
+import { eq, or, and } from "drizzle-orm";
 
 export interface IStorage {
   // User operations for Replit Auth
@@ -17,6 +23,18 @@ export interface IStorage {
   // Team signup operations
   createTeamSignup(signup: InsertTeamSignup): Promise<TeamSignup>;
   getTeamSignups(teamId: string): Promise<TeamSignup[]>;
+  
+  // User profile operations
+  getUserProfile(userId: string): Promise<UserProfile | undefined>;
+  getUserProfileByPark(userId: string, parkId: string): Promise<UserProfile | undefined>;
+  createUserProfile(profile: InsertUserProfile): Promise<UserProfile>;
+  updateUserProfile(id: string, profile: Partial<UserProfile>): Promise<UserProfile>;
+  getParkMembers(parkId: string): Promise<UserProfile[]>;
+  
+  // Park stats operations
+  getParkStats(parkId: string): Promise<ParkStats | undefined>;
+  upsertParkStats(stats: InsertParkStats): Promise<ParkStats>;
+  updateParkMemberCount(parkId: string): Promise<void>;
 }
 
 export class DbStorage implements IStorage {
@@ -72,6 +90,97 @@ export class DbStorage implements IStorage {
       .select()
       .from(teamSignups)
       .where(eq(teamSignups.teamId, teamId));
+  }
+
+  // User profile operations
+  async getUserProfile(userId: string): Promise<UserProfile | undefined> {
+    const [profile] = await db
+      .select()
+      .from(userProfiles)
+      .where(eq(userProfiles.userId, userId));
+    return profile;
+  }
+
+  async getUserProfileByPark(userId: string, parkId: string): Promise<UserProfile | undefined> {
+    const [profile] = await db
+      .select()
+      .from(userProfiles)
+      .where(
+        and(
+          eq(userProfiles.userId, userId),
+          eq(userProfiles.parkId, parkId)
+        )
+      );
+    return profile;
+  }
+
+  async createUserProfile(profile: InsertUserProfile): Promise<UserProfile> {
+    const [newProfile] = await db
+      .insert(userProfiles)
+      .values(profile)
+      .returning();
+    
+    // Update park member count
+    await this.updateParkMemberCount(newProfile.parkId);
+    
+    return newProfile;
+  }
+
+  async updateUserProfile(id: string, profile: Partial<UserProfile>): Promise<UserProfile> {
+    const [updatedProfile] = await db
+      .update(userProfiles)
+      .set(profile)
+      .where(eq(userProfiles.id, id))
+      .returning();
+    return updatedProfile;
+  }
+
+  async getParkMembers(parkId: string): Promise<UserProfile[]> {
+    return await db
+      .select()
+      .from(userProfiles)
+      .where(eq(userProfiles.parkId, parkId));
+  }
+
+  // Park stats operations
+  async getParkStats(parkId: string): Promise<ParkStats | undefined> {
+    const [stats] = await db
+      .select()
+      .from(parkStats)
+      .where(eq(parkStats.parkId, parkId));
+    return stats;
+  }
+
+  async upsertParkStats(stats: InsertParkStats): Promise<ParkStats> {
+    const existing = await this.getParkStats(stats.parkId);
+    
+    if (existing) {
+      const [updated] = await db
+        .update(parkStats)
+        .set({
+          ...stats,
+          updatedAt: new Date(),
+        })
+        .where(eq(parkStats.parkId, stats.parkId))
+        .returning();
+      return updated;
+    } else {
+      const [created] = await db
+        .insert(parkStats)
+        .values(stats)
+        .returning();
+      return created;
+    }
+  }
+
+  async updateParkMemberCount(parkId: string): Promise<void> {
+    const members = await this.getParkMembers(parkId);
+    const count = members.length.toString();
+    
+    await this.upsertParkStats({
+      parkId,
+      totalMembers: count,
+    });
   }
 }
 

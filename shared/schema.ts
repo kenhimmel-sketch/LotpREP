@@ -50,3 +50,44 @@ export const insertTeamSignupSchema = createInsertSchema(teamSignups).omit({
 
 export type InsertTeamSignup = z.infer<typeof insertTeamSignupSchema>;
 export type TeamSignup = typeof teamSignups.$inferSelect;
+
+// User profile to track park membership and stats
+export const userProfiles = pgTable("user_profiles", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id),
+  parkId: varchar("park_id").notNull(),
+  role: varchar("role").default("member"), // member, captain, admin
+  jerseyNumber: varchar("jersey_number"),
+  position: varchar("position"),
+  joinedAt: timestamp("joined_at").defaultNow(),
+  wins: varchar("wins").default("0"),
+  gamesPlayed: varchar("games_played").default("0"),
+});
+
+export const insertUserProfileSchema = createInsertSchema(userProfiles).omit({
+  id: true,
+  joinedAt: true,
+});
+
+export type InsertUserProfile = z.infer<typeof insertUserProfileSchema>;
+export type UserProfile = typeof userProfiles.$inferSelect;
+
+// Park stats table to track team statistics
+export const parkStats = pgTable("park_stats", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  parkId: varchar("park_id").notNull().unique(),
+  totalMembers: varchar("total_members").default("0"),
+  totalWins: varchar("total_wins").default("0"),
+  totalLosses: varchar("total_losses").default("0"),
+  championships: varchar("championships").default("0"),
+  currentSeason: varchar("current_season").default("2025"),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const insertParkStatsSchema = createInsertSchema(parkStats).omit({
+  id: true,
+  updatedAt: true,
+});
+
+export type InsertParkStats = z.infer<typeof insertParkStatsSchema>;
+export type ParkStats = typeof parkStats.$inferSelect;

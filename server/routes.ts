@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertTeamSignupSchema } from "@shared/schema";
+import { insertTeamSignupSchema, insertUserProfileSchema } from "@shared/schema";
 import { setupAuth, isAuthenticated } from "./replitAuth";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -37,6 +37,100 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const signups = await storage.getTeamSignups(req.params.teamId);
       res.json(signups);
     } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Join a park (requires authentication)
+  app.post("/api/parks/:parkId/join", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { parkId } = req.params;
+      
+      // Check if user already belongs to this park
+      const existingProfile = await storage.getUserProfileByPark(userId, parkId);
+      if (existingProfile) {
+        return res.status(400).json({ error: "Already a member of this park" });
+      }
+      
+      // Create new profile
+      const profile = await storage.createUserProfile({
+        userId,
+        parkId,
+        role: "member",
+        wins: "0",
+        gamesPlayed: "0",
+      });
+      
+      res.json(profile);
+    } catch (error: any) {
+      console.error("Error joining park:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Get user's park membership
+  app.get("/api/user/profile", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const profile = await storage.getUserProfile(userId);
+      res.json(profile);
+    } catch (error: any) {
+      console.error("Error getting user profile:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Get park members
+  app.get("/api/parks/:parkId/members", async (req, res) => {
+    try {
+      const { parkId } = req.params;
+      const members = await storage.getParkMembers(parkId);
+      
+      // Get user details for each member
+      const membersWithDetails = await Promise.all(
+        members.map(async (member) => {
+          const user = await storage.getUser(member.userId);
+          return {
+            ...member,
+            user: user ? {
+              firstName: user.firstName,
+              lastName: user.lastName,
+              profileImageUrl: user.profileImageUrl,
+              email: user.email,
+            } : null,
+          };
+        })
+      );
+      
+      res.json(membersWithDetails);
+    } catch (error: any) {
+      console.error("Error getting park members:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Get park stats
+  app.get("/api/parks/:parkId/stats", async (req, res) => {
+    try {
+      const { parkId } = req.params;
+      let stats = await storage.getParkStats(parkId);
+      
+      // If no stats exist, create default ones
+      if (!stats) {
+        stats = await storage.upsertParkStats({
+          parkId,
+          totalMembers: "0",
+          totalWins: "0",
+          totalLosses: "0",
+          championships: "0",
+          currentSeason: "2025",
+        });
+      }
+      
+      res.json(stats);
+    } catch (error: any) {
+      console.error("Error getting park stats:", error);
       res.status(500).json({ error: error.message });
     }
   });
