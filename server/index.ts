@@ -20,6 +20,11 @@ app.use((req, res, next) => {
   res.on("finish", () => {
     const duration = Date.now() - start;
     if (path.startsWith("/api")) {
+      // Don't log 401 errors for auth check endpoints - these are expected for unauthenticated users
+      if (res.statusCode === 401 && path === "/api/auth/user") {
+        return; // Skip logging for expected unauthenticated requests
+      }
+      
       let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
       if (capturedJsonResponse) {
         logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
