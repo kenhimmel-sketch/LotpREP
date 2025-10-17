@@ -1,11 +1,14 @@
 import { Link, useLocation } from "wouter";
-import { Shield, Menu, X } from "lucide-react";
+import { Shield, Menu, X, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Header() {
   const [location] = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { user, isAuthenticated, isLoading } = useAuth();
 
   const navItems = [
     { path: "/", label: "Home" },
@@ -14,6 +17,10 @@ export default function Header() {
     { path: "/teams/sunset-park-scorpions", label: "Scorpions" },
     { path: "/teams/veterans-park-vipers", label: "Vipers" },
   ];
+
+  const handleLogout = () => {
+    window.location.href = "/api/logout";
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-primary/20">
@@ -44,17 +51,44 @@ export default function Header() {
                 </Button>
               </Link>
             ))}
+            {!isLoading && isAuthenticated && user && (
+              <div className="flex items-center gap-2 ml-2">
+                <Avatar className="w-8 h-8" data-testid="avatar-user">
+                  <AvatarImage src={user.profileImageUrl || undefined} className="object-cover" />
+                  <AvatarFallback>
+                    {user.firstName?.[0] || user.email?.[0] || "U"}
+                  </AvatarFallback>
+                </Avatar>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleLogout}
+                  data-testid="button-logout"
+                >
+                  <LogOut className="w-4 h-4" />
+                </Button>
+              </div>
+            )}
           </nav>
 
-          <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            data-testid="button-mobile-menu"
-          >
-            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </Button>
+          <div className="flex items-center gap-2 md:hidden">
+            {!isLoading && isAuthenticated && user && (
+              <Avatar className="w-8 h-8" data-testid="avatar-user-mobile">
+                <AvatarImage src={user.profileImageUrl || undefined} className="object-cover" />
+                <AvatarFallback>
+                  {user.firstName?.[0] || user.email?.[0] || "U"}
+                </AvatarFallback>
+              </Avatar>
+            )}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              data-testid="button-mobile-menu"
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </Button>
+          </div>
         </div>
 
         {mobileMenuOpen && (
@@ -75,6 +109,17 @@ export default function Header() {
                 </Button>
               </Link>
             ))}
+            {!isLoading && isAuthenticated && (
+              <Button
+                variant="ghost"
+                className="w-full justify-start font-montserrat text-foreground mt-2"
+                onClick={handleLogout}
+                data-testid="button-logout-mobile"
+              >
+                <LogOut className="w-4 h-4 mr-2" />
+                Sign Out
+              </Button>
+            )}
           </nav>
         )}
       </div>
