@@ -12,7 +12,7 @@ import { queryClient } from "@/lib/queryClient";
 import logoImage from "@assets/2D9F018A-0943-4164-8A35-03CFA78F9AE1_1760717868263.png";
 
 export default function DiscordHome() {
-  const [selectedPark, setSelectedPark] = useState<string>("acacia-park-avengers");
+  const [selectedPark, setSelectedPark] = useState<string | null>(null);
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [parkModalOpen, setParkModalOpen] = useState(false);
   const { isAuthenticated } = useAuth();
@@ -85,7 +85,7 @@ export default function DiscordHome() {
   };
   
   return (
-    <SidebarProvider style={sidebarStyle as React.CSSProperties} defaultOpen={false}>
+    <SidebarProvider style={sidebarStyle as React.CSSProperties} defaultOpen={true}>
       <div className="flex h-screen w-full bg-background">
         {/* Left Rail - Sidebar */}
         <AppSidebar 
@@ -98,7 +98,7 @@ export default function DiscordHome() {
           {/* Header Bar (Mobile + Desktop) */}
           <header className="flex items-center justify-between px-4 h-12 border-b border-primary/10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <div className="flex items-center gap-3">
-              <SidebarTrigger className="lg:hidden" data-testid="button-sidebar-toggle">
+              <SidebarTrigger data-testid="button-sidebar-toggle">
                 <Menu className="h-5 w-5" />
               </SidebarTrigger>
               

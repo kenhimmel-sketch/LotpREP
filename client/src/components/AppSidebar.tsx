@@ -67,7 +67,7 @@ export function AppSidebar({ selectedPark, onParkSelect }: AppSidebarProps) {
     new Set([selectedPark || parks[0].id])
   );
 
-  const togglePark = (parkId: string) => {
+  const toggleParkExpansion = (parkId: string) => {
     const newExpanded = new Set(expandedParks);
     if (newExpanded.has(parkId)) {
       newExpanded.delete(parkId);
@@ -75,7 +75,6 @@ export function AppSidebar({ selectedPark, onParkSelect }: AppSidebarProps) {
       newExpanded.add(parkId);
     }
     setExpandedParks(newExpanded);
-    onParkSelect(parkId);
   };
 
   return (
@@ -161,13 +160,16 @@ export function AppSidebar({ selectedPark, onParkSelect }: AppSidebarProps) {
                 <div key={park.id}>
                   <SidebarMenuItem>
                     <SidebarMenuButton
-                      onClick={() => togglePark(park.id)}
+                      onClick={() => {
+                        toggleParkExpansion(park.id);
+                        onParkSelect(park.id);
+                      }}
                       className="text-sm font-medium hover-elevate active-elevate-2 px-2 py-1.5"
                       style={{
                         backgroundColor: selectedPark === park.id ? `${park.color}20` : 'transparent',
                         borderLeft: selectedPark === park.id ? `3px solid ${park.color}` : '3px solid transparent',
                       }}
-                      data-testid={`park-${park.id}`}
+                      data-testid={`park-link-${park.id}`}
                       aria-label={`${park.name} - ${park.memberCount} members`}
                       aria-expanded={expandedParks.has(park.id)}
                     >
