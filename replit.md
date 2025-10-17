@@ -185,3 +185,11 @@ Preferred communication style: Simple, everyday language.
 **Fonts**
 - Google Fonts: Playfair Display, Montserrat, Open Sans
 - Preconnected for performance optimization
+
+## Known Limitations
+
+**Sidebar Rail Cursor**
+- The Sidebar Rail component relies on Tailwind CSS v3.4 "in-" selectors for cursor styling
+- These selectors are not fully supported in the current Tailwind version
+- Result: The cursor resize indicators may not display correctly on the sidebar rail
+- This is a cosmetic issue only and does not affect functionality
