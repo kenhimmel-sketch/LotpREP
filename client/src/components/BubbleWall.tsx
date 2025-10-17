@@ -22,7 +22,8 @@ interface BubbleWallProps {
 function generateAvatarPositions(
   count: number,
   emblemRadius: number,
-  containerRadius: number
+  containerRadius: number,
+  seed: string = ""
 ): Array<{ x: number; y: number; scale: number }> {
   const positions: Array<{ x: number; y: number; scale: number }> = [];
   
@@ -39,12 +40,20 @@ function generateAvatarPositions(
   
   let membersPlaced = 0;
   
-  for (const ring of rings) {
+  // Use a deterministic hash based on the seed for starting angle
+  const seedHash = seed.split('').reduce((acc, char) => {
+    return ((acc << 5) - acc) + char.charCodeAt(0);
+  }, 0);
+  const baseAngle = ((seedHash % 360) * Math.PI) / 180;
+  
+  for (let ringIndex = 0; ringIndex < rings.length; ringIndex++) {
+    const ring = rings[ringIndex];
     if (membersPlaced >= count) break;
     
     const membersInRing = Math.min(ring.capacity, count - membersPlaced);
     const angleStep = (2 * Math.PI) / membersInRing;
-    const startAngle = Math.random() * Math.PI; // Randomize starting angle for variety
+    // Deterministic starting angle based on ring index and seed
+    const startAngle = baseAngle + (ringIndex * 0.5);
     
     for (let i = 0; i < membersInRing; i++) {
       if (membersPlaced >= count) break;
@@ -76,7 +85,8 @@ export function BubbleWall({
   const positions = generateAvatarPositions(
     displayMembers.length,
     emblemSize / 2,
-    containerSize / 2
+    containerSize / 2,
+    parkName // Use park name as seed for deterministic positioning
   );
   
   return (

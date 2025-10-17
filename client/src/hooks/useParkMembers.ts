@@ -12,7 +12,25 @@ interface Member {
 // Feature flag for using mock data
 const USE_MOCK_DATA = true; // Set to false when Supabase table is ready
 
-// Generate mock members for a park
+// Deterministic pseudo-random number generator using seed
+function seededRandom(seed: string): () => number {
+  let hash = 0;
+  for (let i = 0; i < seed.length; i++) {
+    const char = seed.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash; // Convert to 32-bit integer
+  }
+  
+  // Linear congruential generator (LCG)
+  let state = hash;
+  
+  return function() {
+    state = (state * 1103515245 + 12345) & 0x7fffffff;
+    return state / 0x7fffffff;
+  };
+}
+
+// Generate deterministic mock members for a park
 function generateMockMembers(parkSlug: string, count: number = 30): Member[] {
   const firstNames = [
     "Jordan", "Alex", "Sam", "Taylor", "Morgan", "Casey", "Riley", "Jamie",
@@ -30,9 +48,13 @@ function generateMockMembers(parkSlug: string, count: number = 30): Member[] {
   
   const members: Member[] = [];
   
+  // Create a deterministic random generator based on park slug
+  const random = seededRandom(parkSlug);
+  
   for (let i = 0; i < count; i++) {
-    const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
-    const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+    // Use deterministic random for name selection
+    const firstName = firstNames[Math.floor(random() * firstNames.length)];
+    const lastName = lastNames[Math.floor(random() * lastNames.length)];
     const name = `${firstName} ${lastName}`;
     const initials = `${firstName[0]}${lastName[0]}`.toUpperCase();
     
@@ -41,8 +63,8 @@ function generateMockMembers(parkSlug: string, count: number = 30): Member[] {
       name,
       initials,
       parkSlug,
-      // Randomly assign avatar URLs (30% chance of having an avatar)
-      avatarUrl: Math.random() > 0.7 ? undefined : `https://i.pravatar.cc/150?img=${i + 1}`,
+      // Deterministically assign avatar URLs (70% chance of having an avatar)
+      avatarUrl: random() > 0.3 ? `https://i.pravatar.cc/150?img=${(i % 70) + 1}` : undefined,
     });
   }
   
