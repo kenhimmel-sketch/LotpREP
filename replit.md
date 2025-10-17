@@ -6,6 +6,14 @@ Legends of the Park is a premium flag football league platform where teams repre
 
 ## Recent Changes
 
+**October 17, 2025 - Discord-Style UI Performance Fix**
+- Fixed critical infinite auth request loop causing preview glitching
+  - Removed loading state auth check from Router component to enable open browsing
+  - Auth hook now uses returnNull behavior for 401 responses to prevent error loops
+  - Configured useAuth with proper cache settings: 5min staleTime, disabled auto-refetch
+  - Reduced auth requests from hundreds/second to single initial request
+  - Preview now stable and performant
+
 **October 17, 2025 - Critical Bug Fixes & 404 Resolution**
 - Fixed routing bug causing 404 errors when accessing team pages directly (client/src/App.tsx)
   - Team pages now accessible to both authenticated and unauthenticated users
