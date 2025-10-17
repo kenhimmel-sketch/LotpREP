@@ -4,6 +4,7 @@ import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, VariantProps } from "class-variance-authority"
 import { PanelLeftIcon } from "lucide-react"
+import { useLocation } from "wouter"
 
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
@@ -68,6 +69,7 @@ function SidebarProvider({
 }) {
   const isMobile = useIsMobile()
   const [openMobile, setOpenMobile] = React.useState(false)
+  const [location] = useLocation()
 
   // This is the internal state of the sidebar.
   // We use openProp and setOpenProp for control from outside the component.
@@ -87,6 +89,13 @@ function SidebarProvider({
     },
     [setOpenProp, open]
   )
+
+  // Auto-close mobile sidebar on route change
+  React.useEffect(() => {
+    if (isMobile && openMobile) {
+      setOpenMobile(false)
+    }
+  }, [location])
 
   // Helper to toggle the sidebar.
   const toggleSidebar = React.useCallback(() => {
@@ -229,7 +238,7 @@ function Sidebar({
       <div
         data-slot="sidebar-container"
         className={cn(
-          "fixed inset-y-0 z-10 hidden h-svh w-[var(--sidebar-width)] transition-[left,right,width] duration-200 ease-linear md:flex",
+          "fixed inset-y-0 z-10 hidden h-svh w-[var(--sidebar-width)] md:flex",
           side === "left"
             ? "left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]"
             : "right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]",
@@ -239,6 +248,7 @@ function Sidebar({
             : "group-data-[collapsible=icon]:w-[var(--sidebar-width-icon)] group-data-[side=left]:border-r group-data-[side=right]:border-l",
           className
         )}
+        style={{ transition: "left 200ms ease-linear, right 200ms ease-linear, width 200ms ease-linear" }}
         {...props}
       >
         <div
@@ -258,15 +268,19 @@ function SidebarTrigger({
   onClick,
   ...props
 }: React.ComponentProps<typeof Button>) {
-  const { toggleSidebar } = useSidebar()
+  const { toggleSidebar, isMobile, openMobile, open } = useSidebar()
+  const isOpen = isMobile ? openMobile : open
 
   return (
     <Button
       data-sidebar="trigger"
       data-slot="sidebar-trigger"
+      data-testid="button-sidebar-toggle"
+      data-state={isOpen ? "open" : "closed"}
+      aria-expanded={isOpen}
       variant="ghost"
       size="icon"
-      className={cn("h-7 w-7", className)}
+      className={cn("h-11 w-11 min-h-[44px] min-w-[44px]", className)}
       onClick={(event) => {
         onClick?.(event)
         toggleSidebar()
