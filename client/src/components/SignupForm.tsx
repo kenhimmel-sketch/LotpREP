@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
 
 const signupSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -54,17 +55,25 @@ export default function SignupForm({ teamId, teamName }: SignupFormProps) {
 
   const onSubmit = async (data: SignupFormData) => {
     setIsSubmitting(true);
-    console.log("Form submitted:", { teamId, ...data });
     
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    
-    toast({
-      title: "Registration Submitted!",
-      description: `Thank you for your interest in joining the ${teamName}. We'll be in touch soon.`,
-    });
-    
-    form.reset();
-    setIsSubmitting(false);
+    try {
+      await apiRequest("POST", "/api/team-signups", { teamId, ...data });
+      
+      toast({
+        title: "Registration Submitted!",
+        description: `Thank you for your interest in joining the ${teamName}. We'll be in touch soon.`,
+      });
+      
+      form.reset();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to submit your registration. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
