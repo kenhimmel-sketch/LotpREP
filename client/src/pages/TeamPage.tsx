@@ -1,9 +1,12 @@
 import { useRoute } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 import Hero from "@/components/Hero";
 import ParkInfo from "@/components/ParkInfo";
 import TeamStats from "@/components/TeamStats";
 import SignupForm from "@/components/SignupForm";
 import { Card } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import type { ParkStats } from "@shared/schema";
 import avengersPlayerImage from "@assets/image_1760690520098.png";
 import defendersPlayerImage from "@assets/image_1760690503486.png";
 import scorpionsImage from "@assets/86495af0-7d4a-4c62-a14d-d8f763c7cbe8_1760688171920.png";
@@ -100,6 +103,12 @@ export default function TeamPage() {
   const [, params] = useRoute("/teams/:slug");
   const slug = params?.slug || "";
   const team = teamData[slug as keyof typeof teamData];
+  
+  // Fetch real stats from database
+  const { data: parkStats, isLoading: statsLoading } = useQuery<ParkStats>({
+    queryKey: [`/api/parks/${slug}/stats`],
+    enabled: !!slug,
+  });
 
   if (!team) {
     return <div>Team not found</div>;
@@ -107,6 +116,23 @@ export default function TeamPage() {
 
   const scrollToSignup = () => {
     document.getElementById("signup")?.scrollIntoView({ behavior: "smooth" });
+  };
+  
+  // Use real stats if available, otherwise use defaults
+  const calculateWinRate = () => {
+    if (!parkStats?.totalWins || !parkStats?.totalLosses) return "0%";
+    const wins = parseInt(parkStats.totalWins);
+    const losses = parseInt(parkStats.totalLosses);
+    const total = wins + losses;
+    if (total === 0) return "0%";
+    return Math.round((wins / total) * 100) + "%";
+  };
+  
+  const stats = {
+    wins: parkStats?.totalWins || "0",
+    players: parkStats?.totalMembers || "0",
+    championships: parkStats?.championships || "0",
+    winRate: calculateWinRate()
   };
 
   return (
@@ -171,7 +197,23 @@ export default function TeamPage() {
         </div>
       </section>
 
-      <TeamStats {...team.stats} />
+      {statsLoading ? (
+        <div className="py-6 sm:py-8 bg-card/50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-3 text-center">
+              Team Statistics
+            </h2>
+            <div className="w-24 h-1 bg-primary mx-auto mb-4 sm:mb-6" />
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+              {[1, 2, 3, 4].map((i) => (
+                <Skeleton key={i} className="h-32" />
+              ))}
+            </div>
+          </div>
+        </div>
+      ) : (
+        <TeamStats {...stats} />
+      )}
 
       <section id="signup" className="py-6 sm:py-8 bg-background">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Menu, Moon, Sun } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { queryClient } from "@/lib/queryClient";
 import logoImage from "@assets/2D9F018A-0943-4164-8A35-03CFA78F9AE1_1760717868263.png";
 
 export default function DiscordHome() {
@@ -60,8 +61,9 @@ export default function DiscordHome() {
         description: `You are now a member of ${selectedPark.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}`,
       });
       
-      // Refresh the page to update member count
-      window.location.reload();
+      // Invalidate cache to refresh member count and stats
+      queryClient.invalidateQueries({ queryKey: [`/api/parks/${selectedPark}/stats`] });
+      queryClient.invalidateQueries({ queryKey: ["park-members", selectedPark] });
     } catch (error: any) {
       toast({
         title: "Error",

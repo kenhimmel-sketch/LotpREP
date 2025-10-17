@@ -9,7 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Users, Trophy, Shield } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import { useQueries } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { ParkStats } from "@shared/schema";
 
@@ -71,6 +71,19 @@ export function ParkSelectionModal({ open, onOpenChange, onSelectPark }: ParkSel
     onOpenChange(false);
   };
 
+  // Fetch all park stats at once using useQueries
+  const parkStatsQueries = useQueries({
+    queries: parks.map(park => ({
+      queryKey: [`/api/parks/${park.id}/stats`],
+      queryFn: async () => {
+        const response = await fetch(`/api/parks/${park.id}/stats`);
+        if (!response.ok) throw new Error("Failed to fetch stats");
+        return response.json() as Promise<ParkStats>;
+      },
+      enabled: open, // Only fetch when modal is open
+    }))
+  });
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
@@ -82,11 +95,8 @@ export function ParkSelectionModal({ open, onOpenChange, onSelectPark }: ParkSel
         </DialogHeader>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-          {parks.map((park) => {
-            const { data: stats, isLoading } = useQuery<ParkStats>({
-              queryKey: [`/api/parks/${park.id}/stats`],
-              enabled: open, // Only fetch when modal is open
-            });
+          {parks.map((park, index) => {
+            const { data: stats, isLoading } = parkStatsQueries[index];
 
             return (
               <div
