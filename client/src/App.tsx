@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import ScrollToTop from "@/components/ScrollToTop";
 import Home from "@/pages/Home";
 import TeamPage from "@/pages/TeamPage";
 import NotFound from "@/pages/not-found";
@@ -12,6 +13,7 @@ import NotFound from "@/pages/not-found";
 function Router() {
   return (
     <>
+      <ScrollToTop />
       <Header />
       <main className="pt-16">
         <Switch>
