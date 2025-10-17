@@ -8,6 +8,10 @@ import avengersPlayerImage from "@assets/image_1760690520098.png";
 import defendersPlayerImage from "@assets/image_1760690503486.png";
 import scorpionsImage from "@assets/86495af0-7d4a-4c62-a14d-d8f763c7cbe8_1760688171920.png";
 import avengersActionImage from "@assets/3cc22e32-7360-464e-b72b-bddb6a57bd14_1760688198596.png";
+import acaciaMascot from "@assets/generated_images/Acacia_tree_football_mascot_befd2de2.png";
+import scorpionMascot from "@assets/generated_images/Scorpion_football_mascot_sunset_7fad2211.png";
+import viperMascot from "@assets/generated_images/Patriotic_viper_football_mascot_9772b044.png";
+import defenderMascot from "@assets/generated_images/Shield_defender_football_mascot_2ca50ff9.png";
 
 const teamData = {
   "acacia-park-avengers": {
@@ -15,6 +19,8 @@ const teamData = {
     park: "Acacia Park",
     heroImage: avengersPlayerImage,
     parkImage: avengersActionImage,
+    mascotImage: acaciaMascot,
+    mascotName: "Ace the Acacia",
     parkDescription: "Acacia Park stands as a verdant oasis in the heart of our community, featuring mature acacia trees that provide natural shade and beauty throughout the seasons.",
     parkHistory: "Established in 1985, Acacia Park has been a cornerstone of community gathering for nearly four decades. The park's distinctive acacia trees were planted by founding families and have grown alongside our neighborhood, creating a legacy of natural beauty and community spirit.",
     parkFeatures: [
@@ -33,6 +39,8 @@ const teamData = {
     park: "Discovery Park",
     heroImage: defendersPlayerImage,
     parkImage: defendersPlayerImage,
+    mascotImage: defenderMascot,
+    mascotName: "Shield the Defender",
     parkDescription: "Discovery Park offers expansive green spaces, modern recreational facilities, and a welcoming environment for families and athletes alike.",
     parkHistory: "Opened in 2005, Discovery Park represents our community's commitment to recreation and wellness. With state-of-the-art facilities and beautiful natural landscapes, it has become a hub for sports and family activities.",
     parkFeatures: [
@@ -51,6 +59,8 @@ const teamData = {
     park: "Sunset Park",
     heroImage: scorpionsImage,
     parkImage: scorpionsImage,
+    mascotImage: scorpionMascot,
+    mascotName: "Sting the Scorpion",
     parkDescription: "Sunset Park captivates visitors with stunning evening vistas and vibrant community energy, making it a beloved gathering place for all generations.",
     parkHistory: "Since its dedication in 1992, Sunset Park has been renowned for its breathtaking sunset views and active community programs. The park serves as a symbol of unity and natural beauty in our region.",
     parkFeatures: [
@@ -69,6 +79,8 @@ const teamData = {
     park: "Veterans Memorial Park",
     heroImage: avengersActionImage,
     parkImage: avengersActionImage,
+    mascotImage: viperMascot,
+    mascotName: "Valor the Viper",
     parkDescription: "Veterans Memorial Park stands as a tribute to those who served, featuring memorial monuments, immaculate grounds, and a profound sense of honor and respect.",
     parkHistory: "Dedicated in 1978, Veterans Memorial Park honors the sacrifice and service of our nation's heroes. The park's solemn beauty and patriotic monuments remind us of the values of courage, dedication, and community.",
     parkFeatures: [
@@ -118,6 +130,27 @@ export default function TeamPage() {
       />
 
       <section className="py-6 sm:py-8 bg-background">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-2xl mx-auto text-center mb-6">
+            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-3">
+              Meet {team.mascotName}
+            </h2>
+            <div className="w-24 h-1 bg-primary mx-auto mb-4" />
+          </div>
+          <div className="flex justify-center">
+            <div className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96">
+              <img
+                src={team.mascotImage}
+                alt={team.mascotName}
+                className="w-full h-full object-contain"
+                data-testid="img-mascot"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-6 sm:py-8 bg-card/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-3 text-center">
             About the Team
