@@ -1,0 +1,55 @@
+[MODE] Plan only. Enable Extended Thinking + High-Power.
+
+Goal:
+Resolve the remaining mobile/UI issues without changing routes, branding, Supabase logic, or environment names (VITE_*). Keep structure and visuals the same.
+
+Targets (tie fixes to these files):
+A) Mobile sidebar toggle reliability
+   • components/ui/sidebar.tsx  (SidebarProvider, SidebarTrigger, Sheet wiring)
+   • pages/DiscordHome.tsx      (header z-index / layout interactions)
+
+B) Toast accessibility and determinism
+   • components/ui/toast.tsx
+   • components/ui/toaster.tsx
+   • hooks/use-toast.ts
+
+C) “Outside viewport” false positives on sidebar links
+   • components/ui/sidebar.tsx  (transform/overflow context)
+   • any visibility helper used in tests (confirm file)
+
+Reproduce FIRST (paste proof):
+1) Set viewport 390x844 (iPhone 15). From “/” and a team page, tap the hamburger 20 times (open/close). Record misses.
+2) Trigger “Choose Your Park” in DiscordHome. Capture visible toast, AND a programmatic signal (event/log). Note screen-reader output (role/aria-live).
+3) Tap several sidebar links near the left edge; capture any “outside viewport” logs.
+
+PLAN (before edits):
+- List exact lines/sections you will touch per file.
+- Root cause hypothesis for each target.
+- Minimal-diff strategy and the tests you’ll run.
+
+Implementation constraints:
+A) Sidebar
+   • Use a single source of truth for open state (decide between `open` and `openMobile` with Sheet) and make the trigger update that state only.
+   • In `SidebarTrigger`, reflect state with `aria-expanded` and `data-state`. Add `data-testid="button-sidebar-toggle"`.
+   • Guarantee overlay order: the Sheet overlay/content must sit above the sticky header; audit z-index so taps aren’t blocked.
+   • Enforce tap target ≥44px, focus trap while open, ESC to close, and body scroll lock while open. Auto-close on route change.
+
+B) Toasts
+   • Standardize a single ToastProvider at app root (already present). Confirm the Radix container carries `role="status"`, `aria-live="polite"`, `aria-atomic="true"`.
+   • Emit a deterministic signal when a toast mounts (e.g., dispatch a window “ToastShown” event AND console.log). Use that for test detection.
+   • Ensure the toast close button remains keyboard-accessible without stealing focus from primary flow.
+
+C) Viewport checks
+   • Remove or adjust transforms on the interactive **link container** if they cause mis-measured rects; or update the visibility check to use the link’s `getBoundingClientRect()` with a small threshold (≥2px) and ignore transformed ancestor offsets.
+   • Avoid wrapping the sidebar in an overflow-hidden container that clips hits; if necessary, give the sidebar its own stacking context.
+
+Acceptance tests (prove after BUILD):
+- Sidebar: 20 open/close cycles clean from “/” and a team page; 0 missed taps. Body scroll is locked while open & restored on close. Focus trap works; ESC closes.
+- Trigger: `aria-expanded` toggles true/false; Lighthouse Mobile Accessibility ≥ 95; axe has 0 serious issues (paste outputs).
+- Toast: When “Choose Your Park” runs, a toast appears AND a `ToastShown` event is emitted; screen reader announces it (role/status + aria-live). Paste console + SR log/sim.
+- Viewport: No “outside viewport” logs when clicking sidebar links. Paste a clean console run.
+- Performance: CLS < 0.10 (mobile) on “/”. Paste Lighthouse summary.
+- Artifacts: paste a file-by-file diff summary and a brief note of root causes and minimal fixes.
+
+If any acceptance test fails:
+- Revert the last change, propose the smallest alternative fix, and wait for my approval.

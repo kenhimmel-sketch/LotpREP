@@ -1,0 +1,74 @@
+[MODE] Build is allowed AFTER this PLAN is locked. Keep Extended Thinking + High-Power on.
+
+APPROVAL WITH CONSTRAINTS
+I approve the implementation plan you proposed with these non-negotiables:
+
+Do NOT change:
+• Routes, branding, spacing, or Supabase logic/schema
+• Env names (VITE_*), file structure, or BubbleWall visuals/geometry
+
+Name/test conventions:
+• Add data-testid="button-sidebar-toggle" on the sidebar trigger
+• Any other new testids must be kebab-case: data-testid="toast-root", "toast-viewport", etc.
+
+FILES TO TOUCH ONLY (unless you discover a blocker and propose before editing):
+• client/src/components/ui/sidebar.tsx
+• client/src/components/ui/toast.tsx
+• client/src/components/ui/toaster.tsx
+• client/src/hooks/use-toast.ts
+
+REQUIRED IMPLEMENTATION DETAILS (tie directly to your root causes)
+
+A) Sidebar toggle reliability
+1) Single source of truth:
+   – Mobile: use openMobile only for the Sheet.
+   – Ensure route change auto-closes the Sheet.
+2) Accessibility & testing:
+   – SidebarTrigger MUST reflect state with aria-expanded (true/false) and data-state (open/closed).
+   – Add data-testid="button-sidebar-toggle".
+3) Interaction polish:
+   – ESC closes; focus is trapped while open; body scroll locked.
+   – Tap target size ≥ 44px.
+4) Layering:
+   – Sheet overlay/content MUST sit above the sticky header (z-index audit so taps aren’t blocked).
+
+B) Toast accessibility + determinism
+1) Live region:
+   – Toast viewport/container uses role="status", aria-live="polite", aria-atomic="true".
+2) Programmatic signal:
+   – Emit a window “ToastShown” CustomEvent with { message, variant } on mount AND console.log("ToastShown", …).
+   – Do not steal focus when showing toasts; keyboard can still reach dismiss.
+3) Single provider:
+   – Confirm a single ToastProvider mounted at app root; no duplicate providers.
+
+C) “Outside viewport” false positives
+1) Transforms:
+   – Avoid transforms on the clickable link container that distort rect checks during interaction.
+   – If you must keep transforms, compute visibility using the link’s getBoundingClientRect() with a ≥2px threshold and ignore transformed ancestors.
+2) Z-index/overflow:
+   – Ensure sidebar has its own stacking context; no overflow clipping interactive areas.
+
+ACCEPTANCE TESTS (paste proof after you push changes)
+Sidebar
+• From "/" and from a team page at 390×844, perform 20 open/close cycles → 0 missed taps.
+• `aria-expanded` toggles correctly; focus trap works; ESC closes; body scroll locked while open and restored on close.
+• Provide a short gif/video or step logs.
+
+Toasts
+• Trigger “Choose Your Park” flow:
+  – Visual toast appears
+  – Console shows `ToastShown` log
+  – `window.addEventListener("ToastShown", …)` would fire (paste a screenshot/log)
+  – Screen reader announcement verified (role/status + aria-live) – paste axe output with 0 serious issues.
+
+Viewport / Clickability
+• Clicking all visible sidebar links produces NO “outside viewport” logs.
+• Provide one clean console run screenshot.
+
+Quality bars
+• Lighthouse (mobile) Accessibility ≥ 95, CLS < 0.10 (paste summary)
+• No new console warnings/errors across "/" and a team page
+• File-by-file diff summary pasted with a 1–2 sentence root-cause note per change
+
+If any acceptance test fails:
+• Revert the last diff, propose the smallest alternative, and wait for my approval.
