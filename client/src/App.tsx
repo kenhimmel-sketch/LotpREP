@@ -6,7 +6,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import DiscordHome from "@/pages/DiscordHome";
 import TeamPage from "@/pages/TeamPage";
 import NotFound from "@/pages/not-found";
-import { useAuth } from "@/hooks/useAuth";
 
 function Router() {
   return (

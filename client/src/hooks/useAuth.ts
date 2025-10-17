@@ -1,11 +1,14 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, type QueryFunction } from "@tanstack/react-query";
 import { getQueryFn } from "@/lib/queryClient";
 import type { User } from "@shared/schema";
 
+// Create a stable queryFn outside the hook to prevent recreating on each render
+const authQueryFn: QueryFunction<User | null> = getQueryFn({ on401: "returnNull" }) as QueryFunction<User | null>;
+
 export function useAuth() {
-  const { data: user, isLoading } = useQuery<User>({
+  const { data: user, isLoading } = useQuery<User | null>({
     queryKey: ["/api/auth/user"],
-    queryFn: getQueryFn({ on401: "returnNull" }),
+    queryFn: authQueryFn,
     retry: false,
     staleTime: 5 * 60 * 1000, // 5 minutes
     refetchOnWindowFocus: false,
@@ -14,7 +17,7 @@ export function useAuth() {
   });
 
   return {
-    user,
+    user: user || undefined,
     isLoading,
     isAuthenticated: !!user,
   };
