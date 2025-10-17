@@ -10,7 +10,7 @@ interface Member {
 }
 
 // Feature flag for using mock data
-const USE_MOCK_DATA = true; // Set to false when Supabase table is ready
+const USE_MOCK_DATA = false; // Now using real database
 
 // Deterministic pseudo-random number generator using seed
 function seededRandom(seed: string): () => number {
@@ -71,26 +71,31 @@ function generateMockMembers(parkSlug: string, count: number = 30): Member[] {
   return members;
 }
 
-// Fetch members from Supabase (when available)
-async function fetchMembersFromSupabase(parkSlug: string): Promise<Member[]> {
-  // TODO: Implement when Supabase user_profiles table is ready
-  // const { data, error } = await supabase
-  //   .from('user_profiles')
-  //   .select('id, display_name, avatar_url')
-  //   .eq('park_slug', parkSlug);
+// Fetch members from database
+async function fetchMembersFromDatabase(parkSlug: string): Promise<Member[]> {
+  const response = await fetch(`/api/parks/${parkSlug}/members`);
+  if (!response.ok) {
+    throw new Error("Failed to fetch park members");
+  }
   
-  // if (error) throw error;
+  const data = await response.json();
   
-  // return data.map(profile => ({
-  //   id: profile.id,
-  //   name: profile.display_name,
-  //   initials: profile.display_name.split(' ').map((n: string) => n[0]).join('').toUpperCase(),
-  //   avatarUrl: profile.avatar_url,
-  //   parkSlug,
-  // }));
-  
-  // For now, return empty array
-  return [];
+  return data.map((member: any) => {
+    const user = member.user;
+    const name = user ? 
+      `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email.split('@')[0] : 
+      'Anonymous';
+      
+    const initials = name.split(' ').map((n: string) => n[0]).join('').toUpperCase() || 'U';
+    
+    return {
+      id: member.id,
+      name,
+      initials,
+      avatarUrl: user?.profileImageUrl,
+      parkSlug,
+    };
+  });
 }
 
 export function useParkMembers(parkSlug: string | null) {
@@ -114,7 +119,7 @@ export function useParkMembers(parkSlug: string | null) {
         return generateMockMembers(parkSlug, count);
       }
       
-      return fetchMembersFromSupabase(parkSlug);
+      return fetchMembersFromDatabase(parkSlug);
     },
     enabled: !!parkSlug,
   });
