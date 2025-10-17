@@ -1,34 +1,27 @@
-import { type TeamSignup, type InsertTeamSignup } from "@shared/schema";
-import { randomUUID } from "crypto";
+import { type TeamSignup, type InsertTeamSignup, teamSignups } from "@shared/schema";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 
 export interface IStorage {
   createTeamSignup(signup: InsertTeamSignup): Promise<TeamSignup>;
   getTeamSignups(teamId: string): Promise<TeamSignup[]>;
 }
 
-export class MemStorage implements IStorage {
-  private signups: Map<string, TeamSignup>;
-
-  constructor() {
-    this.signups = new Map();
-  }
-
+export class DbStorage implements IStorage {
   async createTeamSignup(insertSignup: InsertTeamSignup): Promise<TeamSignup> {
-    const id = randomUUID();
-    const signup: TeamSignup = { 
-      ...insertSignup, 
-      id,
-      message: insertSignup.message ?? null 
-    };
-    this.signups.set(id, signup);
+    const [signup] = await db
+      .insert(teamSignups)
+      .values(insertSignup)
+      .returning();
     return signup;
   }
 
   async getTeamSignups(teamId: string): Promise<TeamSignup[]> {
-    return Array.from(this.signups.values()).filter(
-      (signup) => signup.teamId === teamId,
-    );
+    return await db
+      .select()
+      .from(teamSignups)
+      .where(eq(teamSignups.teamId, teamId));
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DbStorage();
