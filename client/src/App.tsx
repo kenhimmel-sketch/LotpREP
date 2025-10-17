@@ -37,14 +37,8 @@ function Router() {
       <Header />
       <main className="pt-16">
         <Switch>
-          {!isAuthenticated ? (
-            <Route path="/" component={Landing} />
-          ) : (
-            <>
-              <Route path="/" component={Home} />
-              <Route path="/teams/:slug" component={TeamPage} />
-            </>
-          )}
+          <Route path="/" component={isAuthenticated ? Home : Landing} />
+          <Route path="/teams/:slug" component={TeamPage} />
           <Route component={NotFound} />
         </Switch>
       </main>
