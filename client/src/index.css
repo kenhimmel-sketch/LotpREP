@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* LIGHT MODE */
+/* LIGHT MODE - Discord-style black & gold theme */
 :root {
   --button-outline: rgba(0,0,0, .10);
   --badge-outline: rgba(0,0,0, .05);
@@ -11,54 +11,54 @@
   --opaque-button-border-intensity: -8; /* In terms of percentages */
 
   /* Backgrounds applied on top of other backgrounds when hovered/active */
-  --elevate-1: rgba(0,0,0, .03);
-  --elevate-2: rgba(0,0,0, .08);
+  --elevate-1: rgba(255,255,255, .04);
+  --elevate-2: rgba(255,255,255, .08);
 
-  --background: 0deg 0% 0%;
+  --background: 0 0% 5%;
 
-  --foreground: 0 0% 9%;
+  --foreground: 0 0% 95%;
 
-  --border: 0deg 0% 0%;
+  --border: 0 0% 15%;
 
-  --card: 0deg 0% 1.96%;
+  --card: 0 0% 8%;
 
-  --card-foreground: 0deg 0% 100%;
+  --card-foreground: 0 0% 95%;
 
-  --card-border: 0 0% 92%;
+  --card-border: 0 0% 15%;
 
-  --sidebar: 0 0% 96%;
+  --sidebar: 0 0% 7%;
 
-  --sidebar-foreground: 0 0% 9%;
+  --sidebar-foreground: 0 0% 90%;
 
-  --sidebar-border: 0 0% 90%;
+  --sidebar-border: 0 0% 15%;
 
   --sidebar-primary: 45 100% 51%;
 
-  --sidebar-primary-foreground: 45 100% 99%;
+  --sidebar-primary-foreground: 0 0% 0%;
 
-  --sidebar-accent: 45 25% 88%;
+  --sidebar-accent: 45 30% 20%;
 
-  --sidebar-accent-foreground: 45 25% 15%;
+  --sidebar-accent-foreground: 45 100% 51%;
 
   --sidebar-ring: 45 100% 51%;
 
-  --popover: 0deg 0% 0%;
+  --popover: 0 0% 10%;
 
-  --popover-foreground: 0deg 0% 100%;
+  --popover-foreground: 0 0% 95%;
 
-  --popover-border: 0 0% 88%;
+  --popover-border: 0 0% 20%;
 
   --primary: 45 100% 51%;
 
-  --primary-foreground: 0deg 0% 0%;
+  --primary-foreground: 0 0% 0%;
 
-  --secondary: 0deg 0% 0%;
+  --secondary: 0 0% 15%;
 
-  --secondary-foreground: 0deg 100% 98.43%;
+  --secondary-foreground: 0 0% 95%;
 
-  --muted: 0deg 8.91% 60.39%;
+  --muted: 0 0% 35%;
 
-  --muted-foreground: 45 10% 35%;
+  --muted-foreground: 0 0% 60%;
 
   --accent: 0deg 100% 2.94%;
 
@@ -132,23 +132,23 @@
   --elevate-1: rgba(255,255,255, .04);
   --elevate-2: rgba(255,255,255, .09);
 
-  --background: 0 0% 10%;
+  --background: 0 0% 5%;
 
-  --foreground: 0 0% 98%;
+  --foreground: 0 0% 95%;
 
-  --border: 0 0% 20%;
+  --border: 0 0% 15%;
 
-  --card: 0 0% 13%;
+  --card: 0 0% 8%;
 
-  --card-foreground: 0 0% 98%;
+  --card-foreground: 0 0% 95%;
 
-  --card-border: 0 0% 18%;
+  --card-border: 0 0% 15%;
 
-  --sidebar: 0 0% 15%;
+  --sidebar: 0 0% 7%;
 
-  --sidebar-foreground: 0 0% 98%;
+  --sidebar-foreground: 0 0% 90%;
 
-  --sidebar-border: 0 0% 22%;
+  --sidebar-border: 0 0% 15%;
 
   --sidebar-primary: 45 100% 51%;
 
