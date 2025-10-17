@@ -1,0 +1,117 @@
+Goal: A Discord-style homepage in black & gold that feels like a community hub, not a brochure. It should look like Discord’s 3-column layout on desktop, with clean, compact spacing on mobile.
+
+⸻
+
+1) Overall Look & Feel
+	•	Brand: Black background, gold accents, white text. High contrast, tight spacing.
+	•	Type: Headings in a strong, readable serif or display font; body in a clean sans. (Think: bold headline, calm body.)
+	•	Copy to use:
+	•	Main title: LEGENDS OF THE PARK
+	•	Tagline (small, under title): DEFEND WHAT’S LOCAL
+	•	Subheadline (one sentence): Where winning turns into real change.
+	•	Primary CTA: Choose Your Park
+	•	Secondary CTA: Learn How It Works
+
+⸻
+
+2) Discord-Style Layout (Desktop)
+
+Match the Discord 3-panel layout:
+
+Left Rail (Navigation / Parks)
+	•	Fixed left column ~260–280px.
+	•	Top: LOTP logo.
+	•	Below: Navigation items (“Home”, “Parks”, “Schedule”, “Membership”, “Sponsors”).
+	•	Section: Parks (Season One) as a vertical list with small circular thumbnails (use your park images or placeholders).
+	•	Bottom: “Help / FAQ” + “Contact”.
+
+Center Column (Main Feed)
+	•	Width: fluid; it’s the main stage.
+	•	Hero block at the top (uses one of your gold-on-black hero images). Overlay the title + tagline + subheadline + CTA button.
+	•	Below the hero, stack short, card-style sections:
+	1.	“Choose Your Park” card with a clear button.
+	2.	“Latest Schedule” card (teaser copy + “View schedule”).
+	3.	“Become a Member” card (one-line pitch + “See membership”).
+	4.	Sponsors strip (gold boxes for logos).
+	•	Cards should be compact (no giant top/bottom padding) and separated by subtle dividers, like Discord messages.
+
+Right Rail (Community / CTA)
+	•	Fixed right column ~300–320px.
+	•	“Become a Legend” sticky panel: short blurb + “Choose Your Park” button.
+	•	Bubble wall preview: show circular user/profile bubbles “clinging” around the park emblem (think floating cluster). Tap/hover reveals name + park.
+	•	Optional: “Online now” style micro-list (coach, captains, etc.).
+
+⸻
+
+3) Mobile Layout (Compact, No Excess Space)
+	•	Convert the 3 columns into stacked sections:
+	1.	Top App Bar with the logo on the left and a hamburger icon on the right (opens the left rail as a slide-in drawer).
+	2.	Hero (image + title + tagline + subheadline + CTA) with tight vertical rhythm:
+	•	Title top margin: ~16px
+	•	Spacing between title → tagline → subheadline: ~6–8px each
+	•	CTA top margin: ~12–16px
+	3.	Cards (Choose Your Park, Schedule, Membership, Sponsors) stacked with 16px gaps between them.
+	4.	Right-rail content becomes a section near the bottom: “Become a Legend” + compact bubble wall.
+	•	Bottom Navigation (optional but recommended):
+	•	Fixed 4 tabs: Home · Parks · Schedule · Membership
+	•	Keeps the page feeling “app-like,” similar to Discord mobile.
+
+⸻
+
+4) Spacing & Sizing Rules (the main problem you reported)
+
+Use small, consistent spacing. The current site feels “bulky” because margins/padding are too large and inconsistent.
+	•	Core space tokens: 4px, 8px, 12px, 16px, 24px. Avoid anything bigger than 24px on mobile except the hero outer margin (max 32px).
+	•	Heading sizes (mobile):
+	•	H1: ~28–32px
+	•	H2: ~22–24px
+	•	Body: 16px, line-height ~1.4–1.5
+	•	Buttons (mobile): Height ~44–48px; border radius subtle (6–8px). One line of text; no giant paddings.
+	•	Cards (mobile): Internal padding ~16px. Card gap between sections: 16px.
+	•	Section max-widths: Center column shouldn’t stretch endlessly. Constrain content to ~1040px on desktop; on mobile it’s full-width with 16px side gutters.
+
+Acceptance check for “no more big gaps”:
+	•	No vertical gap larger than 24px in any stacked mobile section (except the hero).
+	•	Headline → tagline → subheadline → button never have more than 8px between each line group.
+	•	Cards have exactly 16px top/bottom padding, not more.
+
+⸻
+
+5) How to Use the Provided Images (no code, just placement)
+
+Use your assets to make it feel premium and consistent:
+	•	Logo badge (black/gold crest): Top left of the site (desktop left rail & mobile app bar) and in the hero if desired.
+	•	Discord mock image: Use as style reference only (don’t publish as literal content). Recreate the structure, not the screenshot.
+	•	Gold trophy / cloche images: Great for the hero art and section icons on desktop, and scaled/centered on mobile.
+	•	Black & gold poster (ACACIA PARK / LEGENDS OF THE PARK): Use as a background panel in the main feed or a park-promo card.
+	•	Cute black-and-gold robot: Use sparingly as a “mascot” highlight block (“Meet the LOTP Bot”) in the center column.
+	•	Bracket/board graphic: Use as a visual in the “Latest Schedule” card or on the Schedule page teaser.
+
+(If you need filenames, we can label them for the dev, but the instruction is: use black-&-gold artwork as hero and section art; keep everything consistent and not photo-heavy.)
+
+⸻
+
+6) Interaction Notes
+	•	Choose Your Park button opens a modal or page with a scrollable list of parks (search + filter).
+	•	When a user selects a park, show a Park Page with:
+	•	Park hero image/emblem
+	•	“Defenders bubble wall” (circular avatars clinging around the park emblem). Avatars are small, tight, and clustered—no overlap on top of the emblem; they “orbit” it.
+	•	Join/Follow park button.
+	•	Keep animations subtle (fade/slide 150–200ms). Nothing bouncy.
+
+⸻
+
+7) Accessibility & Performance
+	•	Color contrast must meet AA on black backgrounds.
+	•	Ensure tap targets are at least 44x44px on mobile.
+	•	Compress images; serve responsive sizes. Avoid loading giant desktop assets on mobile.
+
+⸻
+
+8) QA Checklist (what “done” looks like)
+	•	Desktop shows the three-panel Discord layout with fixed left/right rails.
+	•	Mobile shows stacked sections with tight spacing and no oversized gaps.
+	•	Hero text uses the exact copy above; CTAs are visible without scrolling too much.
+	•	Bubble wall appears on park pages and as a small preview on the homepage right rail (desktop) / a section near the bottom (mobile).
+	•	Navigation works: Home, Parks, Schedule, Membership, Sponsors.
+	•	All sections feel compact, not airy; nothing looks “too big” or “too far apart.”
