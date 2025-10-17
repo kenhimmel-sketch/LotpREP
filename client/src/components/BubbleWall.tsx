@@ -87,6 +87,8 @@ export function BubbleWall({
         height: `${containerSize}px`,
       }}
       data-testid="bubble-wall"
+      aria-label={`${parkName} community members visualization`}
+      role="img"
     >
       {/* Central Park Emblem - highest z-index to ensure no overlap */}
       <div

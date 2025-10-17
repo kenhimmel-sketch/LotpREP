@@ -168,6 +168,8 @@ export function AppSidebar({ selectedPark, onParkSelect }: AppSidebarProps) {
                         borderLeft: selectedPark === park.id ? `3px solid ${park.color}` : '3px solid transparent',
                       }}
                       data-testid={`park-${park.id}`}
+                      aria-label={`${park.name} - ${park.memberCount} members`}
+                      aria-expanded={expandedParks.has(park.id)}
                     >
                       <div className="flex items-center justify-between w-full">
                         <div className="flex items-center gap-2">
