@@ -7,7 +7,7 @@ import {
   type UpsertUser,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq } from "drizzle-orm";
+import { eq, or } from "drizzle-orm";
 
 export interface IStorage {
   // User operations for Replit Auth
@@ -27,18 +27,35 @@ export class DbStorage implements IStorage {
   }
 
   async upsertUser(userData: UpsertUser): Promise<User> {
-    const [user] = await db
-      .insert(users)
-      .values(userData)
-      .onConflictDoUpdate({
-        target: users.id,
-        set: {
+    const existingUsers = await db
+      .select()
+      .from(users)
+      .where(
+        or(
+          eq(users.id, userData.id!),
+          eq(users.email, userData.email!)
+        )
+      )
+      .limit(1);
+
+    if (existingUsers.length > 0) {
+      const existingUser = existingUsers[0];
+      const [user] = await db
+        .update(users)
+        .set({
           ...userData,
           updatedAt: new Date(),
-        },
-      })
-      .returning();
-    return user;
+        })
+        .where(eq(users.id, existingUser.id))
+        .returning();
+      return user;
+    } else {
+      const [user] = await db
+        .insert(users)
+        .values(userData)
+        .returning();
+      return user;
+    }
   }
 
   // Team signup operations
