@@ -1,0 +1,58 @@
+[MODE] Plan only. Enable Extended Thinking and High-Power.
+
+You’re implementing the Discord-style LOTP hub. Below are direct answers to your questions and the exact plan/acceptance checks.
+
+ANSWERS TO YOUR QUESTIONS
+1) Park Categories vs Individual Parks
+   • LEFT RAIL: Each park is a CATEGORY.
+   • Clicking a park expands/collapses its CHANNELS in the left rail (Discord-style) AND loads that park’s hub in the center feed (no route change required for this task).
+   • Channels list (same for each park): #home, #announcements, #roster, #game-day, #media, #trades, #governance, #support.
+
+2) User Authentication
+   • Browsing is open to everyone (no login required).
+   • “Join / Become a Legend” action requires login.
+   • If user is logged in and has chosen a park, show a small “Your park” badge in the right rail.
+
+3) Right Rail “Become a Legend” Panel
+   • Sticky on desktop; collapsible on mobile.
+   • Contents: CTA card (“Choose Your Park” → button), quick stats (member count for active park), and 1-line mission text.
+
+4) Bubble Wall Implementation
+   • Use REAL data if available from Supabase (table: user_profiles { id uuid, display_name text, avatar_url text, park_slug text }).
+   • If table/rows are missing, use a TEMP local mock with ~30 avatars + initials fallback; keep the mock behind a simple flag you can remove later.
+   • Hover/tap on an avatar shows a small profile peek (name/initials).
+
+5) Mobile Bottom Navigation
+   • Skip for now (out of scope for this task). We’ll add it later.
+
+6) Content in Center Feed
+   • Keep the card-based sections (Choose Your Park, Latest Schedule, etc.) — NOT chat-style messages.
+
+7) Park Images
+   • Yes, use my park images for the central emblem in the bubble wall (Acacia/Discovery/Veterans/Sunset). If a file is missing, use a neutral fallback and note it.
+
+INVARIANTS (do not change unless I approve)
+• Routes & path structure: /, /parks, /onboarding/choose-park, /me
+• Auth flow and Supabase schema beyond the user_profiles table described above
+• Env names: VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY
+• Brand & team canon:
+  – Global dark theme (black + gold; subtle green accent)
+  – Teams: Acacia Park Avengers; Discovery Park Defenders (blue + lime-green); Veterans Park Vipers (purple + American-flag accent); Sunset Park Scorpions (red + black)
+
+MAKE A PLAN (before editing)
+• Files you will create/update (left rail categories/channels, center feed park hub, right rail CTA, bubble wall component/hook).
+• Data strategy: read user_profiles by park_slug; mock fallback if empty.
+• Layout strategy so the central park image NEVER gets overlapped by bubbles (explicit z-index and hit-testing).
+• Performance strategy: deterministic concentric rings for avatars (not physics); pagination/capping for >100 members.
+• Accessibility: keyboard focus order for avatars; aria-labels; contrast AA.
+• Analytics hook points (just placeholders) for join clicks.
+
+ACCEPTANCE TESTS (prove after BUILD)
+• Left rail shows 4 categories (Acacia, Discovery, Veterans, Sunset). Expanding a park shows the 8 channels listed above.
+• Selecting a park loads its hub in the center feed. No route change required for this task.
+• Bubble wall renders ≥30 avatars around the central emblem with ZERO overlapping of the emblem. Initials shown when avatar_url missing.
+• Right rail sticky CTA visible on desktop; collapsible on mobile. “Join / Become a Legend” prompts login when unauthenticated.
+• No console errors/warnings. Lighthouse (mobile) CLS < 0.10; paste summary.
+• Screenshots: desktop + mobile for each park. Paste a file-by-file diff summary.
+
+After I approve this PLAN, switch to BUILD and execute minimally. If any acceptance test fails, revert and propose the smallest alternative fix.
