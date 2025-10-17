@@ -52,7 +52,7 @@ export default function DiscordHome() {
   };
   
   return (
-    <SidebarProvider style={sidebarStyle as React.CSSProperties}>
+    <SidebarProvider style={sidebarStyle as React.CSSProperties} defaultOpen={false}>
       <div className="flex h-screen w-full bg-background">
         {/* Left Rail - Sidebar */}
         <AppSidebar 

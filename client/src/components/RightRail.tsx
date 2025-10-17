@@ -27,7 +27,7 @@ export function RightRail({ selectedPark, onChoosePark, onJoinPark }: RightRailP
   
   return (
     <div className="w-72 lg:w-80 border-l border-primary/10 bg-card/50 h-full overflow-y-auto">
-      <div className="p-4 space-y-4">
+      <div className="p-3 space-y-3">
         {/* Become a Legend CTA */}
         <Card className="border-primary/20 bg-background sticky top-4">
           <CardHeader className="pb-3">

@@ -99,12 +99,12 @@ export function ParkHub({ parkId, onChoosePark }: ParkHubProps) {
         </div>
       </div>
       
-      {/* Content Cards */}
-      <div className="p-4 md:p-6 space-y-4 max-w-5xl mx-auto">
+      {/* Content Cards - Tight Discord-style spacing */}
+      <div className="p-3 md:p-4 space-y-3 max-w-5xl mx-auto">
         {/* Bubble Wall Card */}
         <Card className="border-primary/20">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-lg flex items-center gap-2">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base md:text-lg flex items-center gap-2">
               <Users className="w-5 h-5 text-primary" />
               Community Members
             </CardTitle>
@@ -127,8 +127,8 @@ export function ParkHub({ parkId, onChoosePark }: ParkHubProps) {
         
         {/* Choose Your Park Card */}
         <Card className="border-primary/20 hover-elevate cursor-pointer" onClick={onChoosePark}>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg flex items-center justify-between">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base md:text-lg flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Trophy className="w-5 h-5 text-primary" />
                 Choose Your Park

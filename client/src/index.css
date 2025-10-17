@@ -79,7 +79,7 @@
   --font-sans: Open Sans, sans-serif;
   --font-serif: Playfair Display, Georgia, serif;
   --font-mono: Menlo, monospace;
-  --radius: .5rem; /* 8px */
+  --radius: .375rem; /* 6px - tighter Discord-style radius */
   --shadow-2xs: 0px 1px 2px 0px hsl(0 0% 0% / 0.05);
   --shadow-xs: 0px 1px 3px 0px hsl(0 0% 0% / 0.1);
   --shadow-sm: 0px 1px 2px 0px hsl(0 0% 0% / 0.05), 0px 1px 3px -1px hsl(0 0% 0% / 0.1);
