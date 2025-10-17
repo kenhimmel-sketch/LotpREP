@@ -6,6 +6,13 @@ Legends of the Park is a premium flag football league platform where teams repre
 
 ## Recent Changes
 
+**October 17, 2025 - Critical Bug Fixes**
+- Fixed auth middleware error handling to properly return 401 responses (server/replitAuth.ts)
+- Connected SignupForm component to backend API - team signups now save to database
+- Fixed user upsert logic to handle both ID and email conflicts, preventing duplicate key errors
+- Removed debug console.log statements from production code
+- All bug fixes verified with end-to-end testing - signup form fully functional
+
 **October 17, 2025 - Replit Authentication Integration**
 - Implemented Replit Auth (OpenID Connect) for user authentication
 - Added users and sessions tables to database schema
