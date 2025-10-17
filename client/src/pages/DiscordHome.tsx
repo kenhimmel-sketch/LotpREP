@@ -3,6 +3,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { ParkHub } from "@/components/ParkHub";
 import { RightRail } from "@/components/RightRail";
+import { ParkSelectionModal } from "@/components/ParkSelectionModal";
 import { Button } from "@/components/ui/button";
 import { Menu, Moon, Sun } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
@@ -12,6 +13,7 @@ import logoImage from "@assets/2D9F018A-0943-4164-8A35-03CFA78F9AE1_176071786826
 export default function DiscordHome() {
   const [selectedPark, setSelectedPark] = useState<string>("acacia-park-avengers");
   const [isDarkMode, setIsDarkMode] = useState(true);
+  const [parkModalOpen, setParkModalOpen] = useState(false);
   const { isAuthenticated } = useAuth();
   const { toast } = useToast();
   
@@ -20,11 +22,7 @@ export default function DiscordHome() {
   };
   
   const handleChoosePark = () => {
-    // TODO: Open park selection modal/page
-    toast({
-      title: "Choose Your Park",
-      description: "Park selection feature coming soon!",
-    });
+    setParkModalOpen(true);
   };
   
   const handleJoinPark = async () => {
@@ -158,6 +156,16 @@ export default function DiscordHome() {
         
         {/* Mobile Bottom Navigation (Optional - not implemented per requirements) */}
       </div>
+      
+      {/* Park Selection Modal */}
+      <ParkSelectionModal
+        open={parkModalOpen}
+        onOpenChange={setParkModalOpen}
+        onSelectPark={(parkId) => {
+          setSelectedPark(parkId);
+          setParkModalOpen(false);
+        }}
+      />
     </SidebarProvider>
   );
 }
