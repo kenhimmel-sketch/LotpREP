@@ -27,15 +27,48 @@ export default function DiscordHome() {
     });
   };
   
-  const handleJoinPark = () => {
+  const handleJoinPark = async () => {
     if (!isAuthenticated) {
       // Trigger login flow
       window.location.href = "/api/login";
-    } else {
-      // TODO: Implement join park logic
+      return;
+    }
+    
+    if (!selectedPark) {
       toast({
-        title: "Join Park",
-        description: `Joining ${selectedPark} coming soon!`,
+        title: "No Park Selected",
+        description: "Please select a park first",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    try {
+      const response = await fetch(`/api/parks/${selectedPark}/join`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to join park");
+      }
+      
+      const profile = await response.json();
+      toast({
+        title: "Successfully Joined!",
+        description: `You are now a member of ${selectedPark.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}`,
+      });
+      
+      // Refresh the page to update member count
+      window.location.reload();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to join park",
+        variant: "destructive",
       });
     }
   };
