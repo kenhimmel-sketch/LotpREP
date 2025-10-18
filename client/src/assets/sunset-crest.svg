@@ -1,0 +1,15 @@
+<svg width="240" height="240" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="sunsetTitle sunsetDesc">
+  <title id="sunsetTitle">Sunset Park Scorpions Crest</title>
+  <desc id="sunsetDesc">A segmented scorpion silhouette over a golden horizon</desc>
+  <defs>
+    <linearGradient id="sunsetGlow" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffd677" />
+      <stop offset="100%" stop-color="#c5781f" />
+    </linearGradient>
+  </defs>
+  <path d="M120 24c-50 0-96 16-96 40v68c0 48 40 96 96 96s96-48 96-96V64c0-24-46-40-96-40z" fill="#070507" stroke="url(#sunsetGlow)" stroke-width="6" />
+  <path d="M120 76c22 0 40 18 40 40s-18 40-40 40-40-18-40-40 18-40 40-40z" fill="#0d0b10" stroke="url(#sunsetGlow)" stroke-width="5" />
+  <path d="M120 92c-12 0-22 10-22 22 0 8 5 16 12 20l-6 14 16 12 16-12-6-14c7-4 12-12 12-20 0-12-10-22-22-22zm0 12c6 0 10 4 10 10s-4 10-10 10-10-4-10-10 4-10 10-10z" fill="url(#sunsetGlow)" />
+  <path d="M98 152l-18 12 12 18-14 10 10 16 20-8 12 18 12-18 20 8 10-16-14-10 12-18-18-12-20 12-20-12z" fill="url(#sunsetGlow)" opacity="0.85" />
+  <path d="M120 46l22 8-8 22h-28l-8-22 22-8z" fill="url(#sunsetGlow)" />
+</svg>

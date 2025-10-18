@@ -1,0 +1,13 @@
+<svg width="240" height="240" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Acacia Park Avengers Crest</title>
+  <desc id="desc">A black shield with a golden tree and halo</desc>
+  <defs>
+    <linearGradient id="acaciaGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffdd7a" />
+      <stop offset="100%" stop-color="#e2ad3b" />
+    </linearGradient>
+  </defs>
+  <path d="M120 20c-52 0-100 12-100 36v64c0 48 38 100 100 100s100-52 100-100V56c0-24-48-36-100-36z" fill="#0b0b0f" stroke="url(#acaciaGlow)" stroke-width="6" />
+  <circle cx="120" cy="88" r="42" fill="none" stroke="url(#acaciaGlow)" stroke-width="5" />
+  <path d="M120 65c-22 0-40 16-40 36 0 16 10 29 24 34l-10 48h52l-10-48c14-5 24-18 24-34 0-20-18-36-40-36zm0 20c6 0 12 5 12 11 0 5-3 9-8 10l10 46h-28l10-46c-5-1-8-5-8-10 0-6 6-11 12-11z" fill="url(#acaciaGlow)" />
+</svg>
