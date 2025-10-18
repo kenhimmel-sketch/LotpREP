@@ -1,0 +1,262 @@
+Replit Implementation Report — Legends of the Park (LOTP)
+
+Clear, actionable spec for the Replit team to implement the LOTP web app exactly as the owner (Ken) wants — efficient, fully functional, and cost-conscious.
+
+⸻
+
+1) Goal (single line)
+
+Build a lightweight, dark-themed (black + gold with subtle green accent) marketing + membership web app for Legends of the Park where the homepage introduces LOTP (not a specific park), a prominent sidebar leads to park pages, and each park page has a “bubble” gallery of circular profile pictures surrounding the park image. All interactive elements (sidebar buttons, park links, signup flows) must work reliably while minimizing Replit runtime/compute usage.
+
+⸻
+
+2) Non-negotiables / Owner requirements
+	•	Homepage must be the LOTP marketing/brand page (NOT Acacia Park).
+	•	Prominent, obvious sidebar CTA/button (users must click to see parks).
+	•	“Meet the Founding Parks” must be on a separate parks page, not the homepage.
+	•	Park pages must include the circular bubble gallery (park image centered, user avatars “cling” around it — no overlap over the center image).
+	•	Theme: Black (background), Gold (primary accent), subtle green accent for micro details.
+	•	Team / park color rules:
+	•	Discovery Park — blue (background) + lime green accent (secondary).
+	•	Veterans Memorial Park → Vampires (purple + American flag motif).
+	•	Sunset Park → red & black.
+	•	Acacia Park → black/gold or owner-specified.
+	•	Slogan: “Defend What’s Local”
+	•	Minimal extra spacing before images (e.g., no large top margins before images).
+	•	Keep Replit usage low / costs minimized while providing full functionality.
+
+⸻
+
+3) High-level architecture & recommended tech (Replit-friendly)
+	•	Frontend: React (Vite) or Next.js (recommended: Next.js with Static Export / ISR)
+	•	Why Next.js: static export (ideal for low-cost hosting), ISR for rare dynamic pages, good image optimization, built-in routing.
+	•	If simplest: React + Vite with static export and client-side router (React Router).
+	•	Backend: Supabase for auth, storage, and Postgres DB (owner already intends Supabase).
+	•	Use Supabase client from frontend (RLS) — avoid backend processes running 24/7.
+	•	Hosting on Replit: prefer static build output (static site) + serverless functions only for necessary API routes (Replit’s “always-on” repls drive costs).
+	•	CDN: Serve static assets via a CDN (Replit static + external CDN if available).
+	•	Storage: Supabase Storage for images (avatars, park images). Use optimized sizes + signed URLs.
+	•	Analytics: Lightweight (e.g., Plausible or GA4 privacy-lite) or serverless event batching.
+	•	Optional: WordPress integration only if explicitly needed; otherwise keep WordPress out to reduce complexity.
+
+⸻
+
+4) Cost & Replit-usage minimization strategy (concrete steps)
+	1.	Static-first: Build pages as static where possible (Homepage, Parks Index, Park pages pre-rendered). Use serverless only for dynamic actions (signup, auth).
+	2.	Disable long-running dev servers in production: Ensure Replit’s project does not auto-run watchers in production. Use build output and serve static files.
+	3.	No persistent background workers: Avoid any always-running processes (cron, socket servers). If scheduled jobs needed, run externally (e.g., Supabase Edge Functions or a cheap scheduler).
+	4.	Client-side Supabase: Use the Supabase JS client in the browser for auth and data reads/writes to avoid a middle server process.
+	5.	Batching & Debounce: Batch write operations and debounce user events (e.g., profile updates) to reduce API calls.
+	6.	Image optimization:
+	•	Generate multiple sizes, use <img srcset> or Next/Image optimization.
+	•	Lazy load offscreen avatars and park images; only load high res for the center park image.
+	•	Limit avatar upload size/resolution client-side.
+	7.	Cache aggressively: Use browser caching + CDN TTLs for static content.
+	8.	Limit Dev Hot Reload: Developers should turn off hot reload or run builds locally when not actively developing to avoid cost.
+	9.	Feature flags for agent/AI: Any agent integrations should be optional and disabled by default. Don’t allow an AI/agent to run automatically in the user’s Repl.
+	10.	Monitoring threshold: Add a simple usage monitor page that displays app metrics so the owner can see if usage spikes.
+	11.	Starter dev environment: include a .replit and replit.nix that uses a static run command in production — e.g., serve build rather than vite dev.
+
+⸻
+
+5) Routes / pages (minimal MVP)
+	•	/ — Homepage (LOTP brand pitch, main hero, CTA → prominent sidebar toggle/button)
+	•	/parks — Parks Index (Meet the Founding Parks — one card per park)
+	•	/park/[park_code] — Park page (center image + bubble gallery, park details, team info)
+	•	/signup — Signup / login (Supabase auth)
+	•	/profile — User profile (select/choose park to represent)
+	•	/about — About / How it works (short)
+	•	/admin (protected) — Admin tools (upload park images, manage users, minimal)
+	•	API endpoints (serverless only):
+	•	POST /api/register — optional serverless wrapper for registration (can be client-only)
+	•	GET /api/parks — park list (cached)
+	•	GET /api/park/:id/users — park members list (paginated)
+	•	POST /api/upload-avatar — handle secure upload to Supabase Storage (signed URL can be used client-side)
+
+⸻
+
+6) UI / UX Details & component breakdown
+
+Global
+	•	Theme: --bg: #000000, --gold: #D4AF37 (or similar), subtle green accent --green-accent: #2ecc71 (tweak to owner’s chosen hex).
+	•	Typography: bold headline font, legible sans-serif for body.
+	•	Layout: responsive, mobile-first. Sidebar collapsible on mobile as a bottom sheet or drawer.
+	•	Spacing rule: no extra spacing before images — ensure headings don’t add extra top margin above hero images.
+
+Homepage (key)
+	•	Hero: Big LOTP logo, subheadline: Where winning turns into real change OR owner prefers “Defend What’s Local” as main slogan — use the owner’s preferred: “Defend What’s Local”. (Make slogan prominent.)
+	•	Sidebar CTA: Large, clearly labeled button or icon: “Parks & Teams →” with tooltip: “Click to explore the parks”.
+	•	Short explainer block: how park selection works (users can pick any park when signing up).
+	•	Primary CTA button: Join / Sign up.
+
+Sidebar
+	•	Must be obvious: use large icon + text, contrasting against black background (gold outline).
+	•	Contains: Parks list (clickable), Teams, Sign up / Log in.
+	•	Accessibility: keyboard navigable, ARIA roles, clear focus styles.
+
+Park page (bubble gallery)
+	•	Center: larger circular park image (fixed size on desktop; responsive smaller on mobile).
+	•	Around it: user avatar bubbles placed in a circular layout (use CSS transforms or canvas for positioning).
+	•	Avatars cling around the center, but do not overlay the center image.
+	•	Avatars scale down with more members; provide pagination or clustering for >30 users.
+	•	No names visible — only avatars (owner requested).
+	•	Image spacing: avatars evenly spaced, keep even margins and avoid overlap.
+	•	Performance: lazy load avatars beyond first 12.
+	•	Secondary sections: team colors, mascot, “Defend What’s Local” callout, subscribe button.
+
+Interaction rules (sidebar buttons)
+	•	Use a client-side router (React Router / Next Link) — buttons should call router.push('/park/acacia') or Link components, not raw anchors that cause full reloads (but full reloads are acceptable for static builds).
+	•	Debug checklist when “buttons do nothing”:
+	•	Ensure correct onClick handlers are attached and not prevented by a parent preventDefault.
+	•	Check for overlay elements with pointer-events: none vs auto.
+	•	Verify links use proper href or Link from the router (e.g., <Link to="...">).
+	•	Confirm JS bundle is loaded and there are no JS errors in the console.
+	•	Verify build isn’t loading wrong route by default (check .replit default run route).
+	•	Provide fallback server-side navigation (href) for non-JS users.
+
+⸻
+
+7) Database / schema suggestions (Supabase)
+
+Keep schemas minimal and indexed for reads.
+
+-- parks
+parks (park_id PK, park_code TEXT UNIQUE, name TEXT, description TEXT, city TEXT, center_image_url TEXT, color_primary TEXT, color_secondary TEXT, mascot JSON)
+
+-- users
+users (user_id PK, email TEXT UNIQUE, name TEXT, avatar_url TEXT, joined_at TIMESTAMP, chosen_park_code TEXT FK -> parks.park_code, is_admin BOOL)
+
+-- badges (if implemented)
+badges (badge_id PK, user_id FK -> users.user_id, type TEXT, issued_at TIMESTAMP)
+
+-- park_members cached view: select users where chosen_park_code = park_code
+
+	•	Add RLS policies for privacy: users can read public park member avatars but not private details.
+	•	Use paginated endpoints for park members: limit=30 default.
+
+⸻
+
+8) Security & Privacy
+	•	Use Supabase Auth for sign-in (email/phone) — no custom session servers.
+	•	Use RLS for row-level security; avoid exposing full user data.
+	•	Avatars: store in Supabase Storage with public or signed URLs (prefer signed URLs when editing).
+	•	Sanitize uploads and set size limits (e.g., 2MB max avatar).
+	•	HTTPS everywhere (Replit/Netlify/Cloud provider will handle certs).
+
+⸻
+
+9) Accessibility & QA (must pass)
+	•	Keyboard accessible sidebar and park lists.
+	•	All images must include alt text.
+	•	Color contrast checks for gold on black.
+	•	Run Lighthouse: Performance, Accessibility, Best Practices. Fix issues before handoff.
+	•	Cross-browser checks (Chrome, Safari, iOS Safari on iPhone).
+
+⸻
+
+10) Testing checklist (deliverable)
+	•	Unit tests for router/links (buttons should navigate).
+	•	E2E test simulating:
+	•	Visit / → click Sidebar CTA → click park link → user sees park page and bubble gallery.
+	•	Signup flow: create user → set chosen park → see avatar on park page.
+	•	Manual QA:
+	•	Confirm homepage is not the Acacia Park page by default.
+	•	Confirm spacing under images is minimal.
+	•	Confirm mobile drawer sidebar works.
+
+⸻
+
+11) Acceptance criteria (what Replit must deliver)
+	1.	Opening the root URL shows the LOTP homepage (brand hero and CTA), not any specific park.
+	2.	A visually prominent sidebar CTA is present and opens a parks list; clicking a park navigates to its page and displays the bubble gallery.
+	3.	Bubble gallery renders correctly for 0 → 30+ members (avatars evenly spaced; center park image unobstructed).
+	4.	Signup / login works via Supabase (email or phone).
+	5.	Admin can upload park images to Supabase Storage and they appear in the UI.
+	6.	App is static-first and does not require a persistent server process for normal site browsing.
+	7.	Documented instructions for how to disable/enable background agents and keep Replit usage low exist in repo README.
+	8.	Performance: Lighthouse score ≥ 80 for Performance and Accessibility on a typical test device (tweak as needed).
+
+⸻
+
+12) Replit project configuration suggestions (practical)
+	•	.replit:
+	•	run = "npm run start:static" (serve static build/ folder)
+	•	build = "npm run build"
+	•	replit.nix or simpler node image that performs build then serve static.
+	•	In project settings: disable “always on” unless needed.
+	•	Add a “Usage & Cost” doc in repo root with steps to disable watchers and agents.
+
+⸻
+
+13) Developer notes — common pitfalls & fixes
+	•	Buttons appear inactive: usually a JS error prevented hydration. Check browser console for exceptions. Ensure client bundle loaded and element class names not mismatched after SSR/SSG.
+	•	Homepage renders a park: default route or Link misconfigured. Ensure router index route (/) maps to Home component; check Replit run command isn’t serving a park page index.html.
+	•	Bubble gallery overlap / spacing: CSS z-index or absolute positioning miscalculation. Use an algorithm to place avatars on circumference scaled to container size; fallback to grid for mobile.
+	•	High Replit usage: dev server running forever or agents enabled. Ensure no node scripts setInterval or open sockets running in production. Use static artifacts.
+
+⸻
+
+14) Deliverables to hand back to owner (Ken)
+	•	Working Replit project link with static deployment and clear README.
+	•	README includes:
+	•	How to run locally
+	•	How to deploy on Replit (with .replit settings)
+	•	How to turn off dev watchers and agents
+	•	How to configure Supabase env vars (SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_KEY — service key keep out of client)
+	•	Short video/screenshots showing:
+	•	Homepage with sidebar CTA
+	•	Clicking park and bubble gallery behavior
+	•	Sign up flow
+	•	Small admin UI for uploading park images to Supabase
+
+⸻
+
+15) Prioritized implementation plan (what to do first)
+	1.	Create skeleton repo and static home page (brand + hero + sidebar CTA).
+	2.	Implement Parks Index page (static JSON of parks) and route.
+	3.	Build Park page with hard-coded sample bubble gallery for acceptance testing.
+	4.	Wire Supabase auth and user signup (client-only).
+	5.	Hook avatars and park membership to real DB; implement signed uploads.
+	6.	Optimize images and enable lazy loading.
+	7.	Final QA, accessibility, and usage profiling; publish and handover.
+
+Note: do not start or enable any automated agents that run continuously. Agents (if any) should be manual and disabled by default.
+
+⸻
+
+16) Helpful code snippets (Router & Sidebar example)
+
+Use client-side routing and ensure clicks trigger navigation:
+
+// SidebarButton.jsx (React)
+import { useRouter } from 'next/router' // or react-router
+export default function SidebarButton({href, label}) {
+  const router = useRouter();
+  return (
+    <button
+      onClick={() => router.push(href)}
+      aria-label={label}
+      className="sidebar-button"
+    >
+      {label}
+    </button>
+  );
+}
+
+Debug tip: if onClick is firing but nothing navigates — put console.log('click') in handler; if not printed, an overlay or pointer-events CSS is blocking the click.
+
+⸻
+
+17) Final notes for Replit engineers
+	•	Follow owner’s visual guidelines exactly. Homepage must not default to a park.
+	•	Make sidebar CTA visually dominant and obviously clickable — treat it as the primary navigation discovery path.
+	•	Keep runtime usage low: static-first, Supabase client-side auth, and no persistent background processes.
+	•	Provide a small “How to keep usage low” README section so Ken (owner) can monitor and disable expensive features.
+
+⸻
+
+If you want, I can now:
+	•	Produce exact CSS tokens (hex for black/gold/green) and component specs, or
+	•	Generate the README text and the .replit config to drop into the repo.
+
+Which of those should I deliver next? (If you prefer, I’ll proceed and produce both now.)

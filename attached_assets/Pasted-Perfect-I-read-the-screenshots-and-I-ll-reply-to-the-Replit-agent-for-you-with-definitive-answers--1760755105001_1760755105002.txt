@@ -1,0 +1,115 @@
+Perfect — I read the screenshots and I’ll reply to the Replit agent for you with definitive answers and a clear build plan so they can stop asking and start building. Paste this reply into the Replit agent chat (or tell the devs to follow it exactly).
+
+⸻
+
+Hi — use these exact decisions & instructions and start Phase 1 work now. Do not ask more clarification questions unless a blocker appears during implementation.
+
+Quick decisions (use these)
+	1.	Membership Payment: Free for MVP. Collect name, email, phone (optional), and a short “experience” field on signup.
+Stripe / paid membership will be added later (Phase 2) — do not implement paid flows in Phase 1.
+	2.	ID Badge generation: Both. Auto-generate a digital badge immediately after the user chooses a park (show it in profile). Also provide a “Generate / Download Badge” button so users can regenerate and download later.
+	3.	Mission statement (copy this verbatim):
+“Legends of the Park brings local communities together through flag football. Each park has its own team—people sign up to represent their park, build neighborhood pride, and turn wins into real improvements for the community. Join your park, defend what’s local, and become a legend.”
+	4.	Current database: Keep & adapt the existing Supabase schema. Migrate/normalize only where necessary. Don’t rebuild from scratch. Use the schema we discussed (parks, users, badges) and add any missing indexes or RLS policies. (If the existing schema is wildly inconsistent, follow “adapt” with migration scripts — ask only for DB read-access if you need to inspect data.)
+	5.	Build approach / priority (must follow): Phase 1 first, Phase 2 second.
+	•	Phase 1 (MVP, immediate):
+	•	Root / = LOTP landing (hero, tagline “Defend What’s Local”, CTA).
+	•	Implement the prominent sidebar (collapsible) and ensure all sidebar buttons work (client-side navigation and anchor fallback).
+	•	/parks index page (cards).
+	•	/park/[park_code] page with a working sample of the bubble gallery (hard-coded avatars ok for Phase 1).
+	•	Supabase Auth (client-side) sign-up / login (free).
+	•	Simple profile page where user chooses a park and badge auto-generates.
+	•	Static export build and .replit config to serve static files (no always-on server).
+	•	README with “how to keep Replit usage low.”
+	•	Phase 2 (after Phase 1 sign-off):
+	•	Full bubble gallery with real avatars, lazy-loading, clustering/pagination >30.
+	•	Avatar upload flow (Supabase Storage signed uploads) + admin upload UI.
+	•	Digital badge generation/download feature (PDF/PNG) and badge design tweaks.
+	•	Optional paid membership / Stripe integration (serverless Checkout + webhook).
+	•	Extra features: badges store, sponsor areas, analytics.
+
+Implementation details the agent must follow now
+
+A. Sidebar navigation: how to implement so it never “does nothing”
+	•	Use client-side routing (next/link or router.push) AND provide an <a href="/park/acacia"> fallback when JS is disabled.
+	•	During QA, add short console.log('sidebar click', href) to every sidebar onClick so you can confirm the handler fires. If console.log does not appear, inspect overlays or CSS pointer-events.
+	•	Ensure there is no element covering the sidebar (z-index, pointer-events) in the layout.
+	•	Provide keyboard focus states and ARIA labels.
+
+B. Supabase & Auth
+	•	Use Supabase Auth (email & phone OTP). Client-side calls only — no persistent backend. Store chosen_park_code on the user row.
+	•	Env vars: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY in Replit secrets. No service keys in repo.
+
+C. Badge generation spec (what to include)
+
+Badge object (store in badges table):
+
+{
+  "badge_id": "<uuid>",
+  "user_id": "<user_uuid>",
+  "park_code": "acacia",
+  "display_name": "Kenneth Himmel",
+  "issued_at": "2025-10-17T12:34:56Z",
+  "badge_data": {
+    "badge_type": "standard",
+    "barcode": "<Code128 value or data string>",
+    "avatar_url": "https://...",
+    "colors": {"primary":"#D4AF37", "accent":"#2EB67D"}
+  }
+}
+
+	•	Auto-generate immediately after park selection with basic card (name, park code, avatar, auto barcode).
+	•	Provide Download button to export PNG/PDF.
+
+D. Database (quick schema guidance — adapt existing)
+
+Minimal tables / fields to confirm exist or add:
+	•	parks(park_id, park_code, name, center_image_url, color_primary, color_secondary, tagline, description)
+	•	users(user_id, email, name, avatar_url, chosen_park_code, created_at)
+	•	badges(badge_id, user_id, park_code, issued_at, badge_data JSON)
+
+Add indexes on users(chosen_park_code) and RLS policies to restrict private fields.
+
+E. Image and performance rules (must follow)
+	•	Static-first export. Use next export or pre-rendered static pages.
+	•	Avatar upload limit: 2MB max, client-side resize.
+	•	Lazy-load avatars beyond the first 12.
+	•	Use srcset for center image + avatars.
+	•	Disable dev hot-reload in production Repl.
+
+F. Stripe / Payments (Phase 2 notes, don’t implement yet)
+	•	When ready: implement Stripe Checkout sessions using a serverless endpoint (Supabase Edge Function or a small serverless Replit function that is run only on demand).
+	•	On successful payment, update users table with membership_paid=true via webhook.
+
+Acceptance criteria (Phase 1)
+	•	Root / shows LOTP landing (not a park page).
+	•	Sidebar is visually prominent and clicking any park navigates to /park/[park_code] with client-side transition or fallback anchor.
+	•	Park page displays center image and working sample bubble gallery (no overlap of avatars over center).
+	•	Signup & profile: user can choose park and immediately see their avatar + badge generated on that park page.
+	•	Static export configured (npm run build → out/) and .replit set to serve static output. No always-on processes required for browsing.
+	•	README includes explicit “how to keep Replit usage low” steps.
+
+Testing checklist to run now (copy-paste)
+	1.	Visit / — confirm hero + CTA present.
+	2.	Click “Parks & Teams” — sidebar opens (or navigates) and you see parks list.
+	3.	Click a park from the sidebar — confirm navigation to /park/[park_code].
+	4.	Sign up (email) — confirm you can choose a park on profile.
+	5.	After choosing a park, visit that park page — confirm the user avatar is visible on the bubble gallery (or appears in the member list).
+	6.	Run Lighthouse quick check (desktop/mobile) — Performance & Accessibility >= 70+ for now (aim 80+).
+	7.	Run static export build and confirm serve out shows expected site (no dev server required).
+
+⸻
+
+Final instruction to the agent / devs:
+
+Start Phase 1 now using the rules above. Deliver a working preview link with: (1) homepage, (2) sidebar + parks list, (3) at least one park page with bubble gallery, (4) signup & profile where a user can choose a park and see their avatar. Include the README and a 60s screen recording of the flows in the handoff.
+
+If anything blocks Phase 1 (cannot access Supabase, or existing DB is corrupted), report that specific blocker with exact error/logs — otherwise proceed.
+
+⸻
+
+If you want, I’ll now:
+	•	Paste the Phase 1 admin/upload page (signed Supabase upload) to drop in, and
+	•	Paste a short QA script the devs can run step-by-step.
+
+Which of those do you want me to paste next?

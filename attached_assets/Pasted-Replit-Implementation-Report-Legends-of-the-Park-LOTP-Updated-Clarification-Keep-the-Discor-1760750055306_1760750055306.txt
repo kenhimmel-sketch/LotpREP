@@ -1,0 +1,218 @@
+Replit Implementation Report — Legends of the Park (LOTP)
+
+(Updated / Clarification: Keep the Discord-inspired theme intact — do NOT remove Discord functionality or the bubble/ sidebar design.)
+
+This is a copy-paste ready, developer-facing spec for the Replit engineers. It clarifies the homepage-first requirement and explicitly instructs you to preserve and implement the Discord-inspired UI (sidebar + circular “bubble” profile gallery) while making the app static-first and cost-efficient.
+
+⸻
+
+0) VERY IMPORTANT — Clarification for Replit
+
+Do not remove or replace the Discord-inspired design elements. The owner (Ken) requests a normal landing homepage (LOTP marketing page) as the root, and the site must include a Discord-style UI pattern:
+	•	A prominent, obvious collapsible sidebar (desktop left, mobile drawer) that lists parks and navigation items.
+	•	Circular avatar “bubble” galleries on each park page (center park image with user avatars arranged around it).
+	•	The visual language, spacing, and interaction patterns should evoke Discord (clean dark UI, circular avatars, compact rows) — but implemented as standard web components (not a plugin that requires a Discord server).
+
+If any internal tools or prompts suggest “remove Discord functionality/type,” ignore that. Preserve these UI elements exactly as described.
+
+⸻
+
+1) One-line goal
+
+Homepage = LOTP brand/landing page (NOT a park page). Provide a Discord-inspired site navigation (prominent sidebar) and fully functional park pages with the circular “bubble” gallery. All interactive elements must work reliably and be optimized to minimize Replit runtime usage.
+
+⸻
+
+2) Non-negotiable owner requirements (copy these into your acceptance checklist)
+	•	Root / must render the LOTP landing/homepage (hero, slogan “Defend What’s Local”, CTA).
+	•	Separate Parks index page (/parks) — do not show “Meet the Founding Parks” on the homepage.
+	•	Keep the Discord-inspired theme (black background, gold accents, circular avatar bubbles, collapsible sidebar).
+	•	Sidebar must be obviously clickable and functional. Buttons in it must navigate reliably.
+	•	Park page must show: large center park image + circular avatar gallery that “clings” around (no overlap on center).
+	•	Signup via Supabase (email or phone) with client-side Supabase integration.
+	•	Keep Replit usage minimized (static-first, no always-on processes).
+
+⸻
+
+3) Priority tasks for implementation (in order)
+	1.	Create static homepage (/) — LOTP hero, gold CTA labeled “Parks & Teams →” (this CTA opens sidebar or navigates to /parks).
+	2.	Implement persistent left sidebar component (collapsible) with large CTA and parks list.
+	3.	Create Parks index page (/parks) with card for each park.
+	4.	Create Park page (/park/[park_code]) with center image + bubble gallery (start with hard-coded samples).
+	5.	Wire Supabase Auth (client-side) and allow users to choose a park in signup/profile.
+	6.	Hook avatar uploads to Supabase Storage (signed URLs), display avatars on park pages.
+	7.	Performance optimizations (lazy load, static export, CDN).
+
+⸻
+
+4) UI / UX specifics (exact behavior for Replit)
+
+Theme & Tokens (use these exact variables)
+
+:root{
+  --bg: #000000;           /* black */
+  --gold: #D4AF37;         /* primary accent (gold) */
+  --gold-dark: #A88427;
+  --green-accent: #2EB67D; /* subtle green accent */
+  --muted: #BDBDBD;
+  --card-bg: #0b0b0b;
+}
+
+Homepage
+	•	Hero: LOTP logo, tagline “Defend What’s Local”, CTA large and gold on black.
+	•	Short explainer: one paragraph explaining park choice flows (users can choose any park during signup).
+	•	Primary CTA: Join / Sign up (links to /signup).
+	•	Secondary: Parks & Teams → button opens the sidebar or navigates to /parks. Must be visually dominant.
+
+Sidebar (critical)
+	•	Desktop: left persistent collapsible sidebar, width ~280px.
+	•	Mobile: bottom drawer or hamburger that expands to full height.
+	•	Visual: dark card with gold border or accent for active item.
+	•	Contents: large button at top “Parks & Teams” → list of parks (clickable), Sign up / Log in, About.
+	•	Behavior: Clicking a park uses client-side navigation (React Router / Next Link). If JS fails, use normal <a href> fallback.
+
+Park page — Bubble gallery (exact behavior)
+	•	Center: circular park image (larger than avatars).
+	•	Around it: avatars placed along a circumference or several concentric rings.
+	•	Avatars scale down as count grows; for >30 users collapse into clusters or paginate.
+	•	No names visible — only avatars.
+	•	For performance: render first 12 immediately; lazy load the rest.
+	•	Mobile: switch to grid or carousel for avatars to avoid overlap.
+
+⸻
+
+5) Implementation details / code guidance (copy-paste ready)
+
+Sidebar button (React + Next.js / React Router)
+
+// SidebarButton.jsx
+import { useRouter } from 'next/router' // or react-router
+export default function SidebarButton({ href, label }) {
+  const router = useRouter();
+  return (
+    <button
+      onClick={() => router.push(href)}
+      aria-label={label}
+      className="sidebar-button"
+    >
+      {label}
+    </button>
+  );
+}
+
+Important: Use router.push or <Link> — do not attach href="#" with preventDefault without navigation logic. Add console.log in handlers during QA to confirm click fired.
+
+Bubble placement algorithm (simple canvas/CSS approach)
+	•	Compute N avatars. For each avatar i (0..N-1):
+	•	angle = (i / N) * 2π
+	•	x = centerX + (radius * cos(angle))
+	•	y = centerY + (radius * sin(angle))
+	•	Use CSS transform translate(-50%,-50%) to center each avatar at (x,y).
+	•	If N > 24, add a second ring with smaller radius and start offset, or cluster.
+(We can provide a JS snippet on demand — but this algorithm is sufficient for the front-end devs to implement.)
+
+⸻
+
+6) Debug checklist (when “buttons do nothing”)
+	1.	Open browser console → any JS errors? Fix exceptions first (often prevents hydration).
+	2.	Confirm DOM element receives the click: add console.log('click') to handler; if nothing prints, check overlay/z-index or pointer-events.
+	3.	Check CSS: pointer-events: none on wrapper blocks clicks.
+	4.	Check that the JS bundle is loaded and hydrated (SSR → client-side hydration mismatch can block event listeners).
+	5.	If using Next.js with Static Export, ensure client-side routing script is included, or fallback to <a href="/park/acacia">.
+	6.	Ensure router.push or <Link> is used instead of preventing default anchor behavior.
+
+⸻
+
+7) Static-first & Replit cost minimization (exact steps)
+	•	Build for static hosting (Next.js export or React build).
+	•	.replit run command must serve static build/ (example below).
+	•	Do not enable watchers or hot reload on production repls.
+	•	Use Supabase client directly from browser — avoid a server process.
+	•	Avoid background workers, cron jobs, or sockets on Replit.
+	•	Lazy load avatars and images, generate srcset, and set reasonable max upload sizes (2MB).
+
+.replit example
+
+run = "npm run start:static"
+build = "npm run build"
+
+package.json:
+
+"scripts": {
+  "build": "next build && next export -o out",
+  "start:static": "npx serve out -s -l 8080"
+}
+
+
+⸻
+
+8) Supabase integration notes (exact)
+	•	Use Supabase Auth for sign-in (email + phone OTP).
+	•	Store avatars in Supabase Storage; generate signed URLs for display or use public URLs with size limits.
+	•	RLS policies: allow reading public avatars but restrict user metadata (email, etc.).
+	•	Keep Supabase keys out of repo. Use environment variables (SUPABASE_URL, SUPABASE_ANON_KEY) in Replit secrets.
+
+⸻
+
+9) Testing & acceptance criteria (must pass)
+	•	Root / loads LOTP landing (not a park).
+	•	Sidebar is visually prominent and opens; clicking a park navigates to /park/[park_code].
+	•	Park page shows center image + avatar bubbles (no overlap on center).
+	•	Signup flow works (create account, choose park, avatar appears on park page within 60s).
+	•	No always-on Node process required for regular browsing.
+	•	Documentation: README includes “How to keep Replit usage low”.
+	•	Provide screenshots/video of: Landing page, sidebar open and park click, park page with bubble gallery, signup flow.
+
+If any of these fail, return to checklist in §6.
+
+⸻
+
+10) Deliverables to hand back (explicit)
+	•	Deployed Replit link with static site.
+	•	README.md (copy-paste ready) — includes how to run locally, how to deploy, how to disable watchers/agents, and environment variable instructions.
+	•	.replit + package.json scripts as shown above.
+	•	A short / 60–90s screen recording showing the required flows (landing → sidebar → park → bubble gallery → signup).
+	•	Small admin UI for uploading park images (or instructions for admin to upload to Supabase Storage).
+
+⸻
+
+11) README snippet (copy-paste into repo)
+
+# Legends of the Park (LOTP) — Replit README
+
+## Important notes for Replit engineers
+- Root `/` MUST be the LOTP landing homepage (marketing/brand).
+- Preserve the Discord-inspired UI: collapsible sidebar + circular avatar bubble galleries on park pages.
+- DO NOT remove or replace Discord inspired functionality/type.
+- App is static-first. Avoid any always-on processes in production.
+
+## Run locally
+1. Install dependencies: `npm install`
+2. Build: `npm run build`
+3. Serve static export: `npm run start:static`
+
+## Environment
+- Set the following env vars in Replit secrets:
+  - SUPABASE_URL
+  - SUPABASE_ANON_KEY
+
+## How to keep Replit usage low
+- Use static export for production.
+- Disable hot-reload in production repl.
+- Avoid background agents and watchers.
+
+
+⸻
+
+12) Final notes to Replit engineers
+	•	This spec is explicit: keep the Discord-inspired design and bubble gallery. The owner pasted earlier instructions and Replit appears to have interpreted them as “remove Discord functionality” — that is incorrect. Keep those visual/interaction patterns and implement them as native web components.
+	•	If you plan any UI change that reduces or removes the Discord-like pattern, seek explicit written approval from the owner (Ken) before making the change.
+	•	If anything in this doc seems technically infeasible within Replit constraints, propose the minimal alternative that preserves the look/feel (e.g., grid + circular avatars instead of canvas ring), and explicitly mark it “owner approval required.”
+
+⸻
+
+Would you like me to also produce:
+	•	(A) exact CSS component classes and React component templates for the sidebar and bubble gallery (ready to drop into the code), and
+	•	(B) the full README.md file filled out with deployment steps and cost-saving tips?
+
+If yes, I will paste both so you can copy-paste them into Replit.
