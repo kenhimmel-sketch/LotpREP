@@ -1,0 +1,280 @@
+Awesome — here’s everything you asked for, ready to paste into your repo or straight into the Replit agent chat:
+
+⸻
+
+1) Admin Upload Page (client-only, safe with Storage policies)
+
+This page lets an admin upload a park’s center image to Supabase Storage and automatically writes the public URL into the parks.center_image_url field. It does not require any always-on server and respects your “static-first, low-usage” rule.
+
+Buckets used below
+• park-images (public read, admin-only write)
+• avatars (public read OK, user-only write to /user_id/*)
+
+1.1 Add a Supabase client
+
+lib/supabaseClient.js
+
+// lib/supabaseClient.js
+import { createClient } from '@supabase/supabase-js';
+
+export const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+  { auth: { persistSession: true, autoRefreshToken: true } }
+);
+
+1.2 Admin Upload page (drop in pages/admin/upload.jsx)
+
+// pages/admin/upload.jsx
+import { useEffect, useState } from 'react';
+import { supabase } from '../../lib/supabaseClient';
+import parks from '../../data/parks.json'; // [{park_code,name,...}]
+
+export default function AdminUpload(){
+  const [user, setUser] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [park, setPark] = useState('acacia');
+  const [file, setFile] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState('');
+
+  useEffect(() => {
+    (async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user || null);
+      if (!user) return;
+      // Check our public.users table for is_admin flag
+      const { data, error } = await supabase
+        .from('users')
+        .select('is_admin')
+        .eq('user_id', user.id)
+        .maybeSingle();
+      setIsAdmin(!!data?.is_admin && !error);
+    })();
+  }, []);
+
+  async function handleUpload(){
+    if (!user) { setMsg('Please log in.'); return; }
+    if (!isAdmin) { setMsg('Admin only.'); return; }
+    if (!file) { setMsg('Pick a file first.'); return; }
+
+    try{
+      setBusy(true); setMsg('Uploading...');
+      const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+      const path = `parks/${park}/center_${Date.now()}.${ext}`;
+
+      // 1) Upload to the public bucket "park-images" (write is allowed for admins via RLS)
+      const { error: upErr } = await supabase
+        .storage
+        .from('park-images')
+        .upload(path, file, { upsert: true, cacheControl: '3600', contentType: file.type || 'image/jpeg' });
+      if (upErr) throw upErr;
+
+      // 2) Get a public URL (bucket is public-read)
+      const { data: pub } = supabase
+        .storage
+        .from('park-images')
+        .getPublicUrl(path);
+
+      // 3) Save to parks table
+      const { error: upParkErr } = await supabase
+        .from('parks')
+        .update({ center_image_url: pub.publicUrl })
+        .eq('park_code', park);
+      if (upParkErr) throw upParkErr;
+
+      setMsg('✅ Uploaded and saved!');
+      setFile(null);
+    }catch(err){
+      console.error(err);
+      setMsg('❌ Upload failed: ' + (err?.message || String(err)));
+    }finally{
+      setBusy(false);
+    }
+  }
+
+  return (
+    <main style={{maxWidth:680, margin:'40px auto', padding:'0 16px', color:'#fff'}}>
+      <h1 style={{color:'#D4AF37'}}>Admin: Park Image Upload</h1>
+      {!user && <p>Log in first to continue.</p>}
+      {user && !isAdmin && <p>Only admins can upload park images.</p>}
+
+      <label style={{display:'block', marginTop:16}}>Select park</label>
+      <select value={park} onChange={e=>setPark(e.target.value)} style={{padding:8}}>
+        {parks.map(p => <option key={p.park_code} value={p.park_code}>{p.name}</option>)}
+      </select>
+
+      <label style={{display:'block', marginTop:16}}>Pick image (JPG/PNG ≤ 2MB)</label>
+      <input type="file" accept="image/*" onChange={e=>setFile(e.target.files?.[0] || null)} />
+
+      <button
+        onClick={handleUpload}
+        disabled={!file || busy}
+        style={{
+          marginTop:16, padding:'10px 14px', fontWeight:700,
+          background:'#D4AF37', color:'#000', border:'none', borderRadius:8, cursor:'pointer'
+        }}
+      >
+        {busy ? 'Uploading...' : 'Upload & Save'}
+      </button>
+
+      {msg && <p style={{marginTop:12}}>{msg}</p>}
+    </main>
+  );
+}
+
+Why this is safe without a server:
+We rely on Supabase Storage policies to limit who can write to the park-images bucket (admins only). The page only uses the anon key and your user’s auth session; the policy does the enforcement on the Supabase side.
+
+⸻
+
+1.3 Supabase Storage Policies (copy into SQL editor in Supabase)
+
+Create two buckets:
+park-images (Public = True), avatars (Public = True).
+Public read keeps the site fast; write is guarded by policies.
+
+Admin-only write to park-images:
+
+-- Public read for park images
+create policy "Public read park images"
+on storage.objects for select
+to public
+using (bucket_id = 'park-images');
+
+-- Admins can insert/update/delete park images
+create policy "Admins can insert park images"
+on storage.objects for insert
+to authenticated
+with check (
+  bucket_id = 'park-images'
+  and exists (
+    select 1 from public.users u
+    where u.user_id = auth.uid() and u.is_admin = true
+  )
+);
+
+create policy "Admins can update park images"
+on storage.objects for update
+to authenticated
+using (
+  bucket_id = 'park-images'
+  and exists (
+    select 1 from public.users u
+    where u.user_id = auth.uid() and u.is_admin = true
+  )
+)
+with check (true);
+
+create policy "Admins can delete park images"
+on storage.objects for delete
+to authenticated
+using (
+  bucket_id = 'park-images'
+  and exists (
+    select 1 from public.users u
+    where u.user_id = auth.uid() and u.is_admin = true
+  )
+);
+
+Users may upload only their own avatars to avatars:
+
+-- Public read avatars
+create policy "Public read avatars"
+on storage.objects for select
+to public
+using (bucket_id = 'avatars');
+
+-- Authenticated users can insert into a path starting with their uid
+-- Path convention: avatars/<user_id>/avatar_*.jpg
+create policy "Users upload their own avatar"
+on storage.objects for insert
+to authenticated
+with check (
+  bucket_id = 'avatars'
+  and (left(name, length(auth.uid()::text)) = auth.uid()::text)
+);
+
+-- Users can update/delete their own files
+create policy "Users manage their own avatar files"
+on storage.objects for update using (
+  bucket_id = 'avatars'
+  and (left(name, length(auth.uid()::text)) = auth.uid()::text)
+);
+create policy "Users delete their own avatar files"
+on storage.objects for delete using (
+  bucket_id = 'avatars'
+  and (left(name, length(auth.uid()::text)) = auth.uid()::text)
+);
+
+Make sure your public.users table has user_id uuid primary key matching auth.uid() and a boolean is_admin. Mark your admin user with is_admin = true.
+
+⸻
+
+2) 60-Second QA Script (dev can run this quickly)
+
+Goal: verify Phase-1 works, links never “do nothing,” uploads stay admin-only, and usage stays low.
+	1.	Homepage
+	•	Open /. Expect hero title, “Defend What’s Local.”
+	•	Click Parks & Teams → → lands on /parks or opens sidebar.
+	2.	Sidebar
+	•	Toggle open/close; tab through items (keyboard focus visible).
+	•	Click each park link; watch Console — see sidebar click log; route changes to /park/<code>.
+	•	Disable JS in DevTools → clicking park <a> still navigates (anchor fallback).
+	3.	Signup → Park choice → Badge
+	•	Sign up with email (Supabase).
+	•	Choose a park on profile. Badge auto-appears with Member ID & barcode.
+	•	Download PNG; scan barcode → payload must match: LOTP|v1|<member_id>|<park_code>|<issued_at_iso>.
+	4.	Bubble Gallery
+	•	Open any park page. Center image not overlapped; at least 12 avatars render; others lazy-load while scrolling.
+	•	Resize to mobile: gallery falls back to grid; no overlap.
+	5.	Admin Upload
+	•	Log in as admin; visit /admin/upload.
+	•	Select a park, upload ≤ 2MB JPG/PNG. Expect ✅ Uploaded and saved! and the park page shows the new image.
+	•	Log in as non-admin → upload should fail with “Admin only” (policy enforced).
+	6.	Static Export Check
+	•	Run npm run build then npm run start:static. Confirm site works from out/ and DevTools shows no hot-reload sockets.
+	7.	Lighthouse
+	•	Desktop & mobile: Performance & Accessibility ≥ 70 (target 80+). Large images flagged? Reduce center image size.
+
+⸻
+
+3) Why this design is “low-usage” and reliable (the thorough explanation)
+
+Static-first = cheapest on Replit.
+We build pages statically (Next export → out/) and serve them with a tiny static file server. There’s no dev hot-reload or background Node server draining your plan. Supabase handles auth, data, and storage via its hosted APIs; the browser talks directly to Supabase using the anon key.
+
+Navigation that “never does nothing.”
+We use client-side routing for speed and anchor <a href> fallbacks for reliability. If hydration fails or JS is off, the browser still navigates via normal links. During QA we log sidebar click to confirm handlers fire; if not, we immediately look for CSS pointer-events and z-index overlays (the most common cause of “buttons don’t work”).
+
+Storage without a server (but still safe).
+Instead of creating your own signing service, we push all enforcement into Storage Policies on Supabase.
+	•	Park images: public read for speed, admin-only writes via RLS. The client can attempt an upload, but Supabase blocks it if the user is not an admin.
+	•	Avatars: public read, user-scoped write paths (avatars/<uid>/*) so members can only touch their own files.
+
+Badge IDs are deterministic, not fragile.
+Format LTP-<PARK4>-<000000> is readable and stable. We maintain a tiny member_counters table or fall back to UUID-based IDs if needed. The Code-128 barcode encodes versioned data: LOTP|v1|…, which gives us flexibility to add fields later (v2) without breaking scanners.
+
+Bubble gallery is performant.
+We render the first 12 avatars immediately and lazy-load the rest with IntersectionObserver. For >30 users we add a second ring or paginate. On mobile, we fall back to a grid so there’s no expensive layout thrashing or overlap headaches.
+
+Clear “do/don’t” edges reduce churn.
+	•	Do: keep the Discord-style theme (dark, circular avatars, collapsible sidebar).
+	•	Don’t: replace it with a generic template or run a hot dev server in production.
+	•	Do: push heavy work (payments, PDFs, advanced badge styling) to Phase 2.
+
+⸻
+
+4) Short reply you can paste to the Replit agent (hands-on next step)
+
+Please add the Admin Upload page and policies below.
+	1.	Create lib/supabaseClient.js and pages/admin/upload.jsx from my spec.
+	2.	In Supabase, create buckets park-images and avatars and paste the provided SQL policies.
+	3.	Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to Replit secrets.
+	4.	Confirm as admin you can upload a park center image and it updates the parks.center_image_url.
+	5.	Run the 60-second QA script I provided and share a short screen recording of steps 1–5.
+If any step fails, paste the exact error/log and proceed with unaffected tasks.
+
+⸻
+
+If you want, I can also give you the tiny avatar upload widget for members’ profile pages (enforces the avatars/<uid>/ path and auto-resizes to 512×512 before upload).

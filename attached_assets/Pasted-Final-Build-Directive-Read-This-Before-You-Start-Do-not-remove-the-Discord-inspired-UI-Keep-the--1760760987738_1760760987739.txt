@@ -1,0 +1,35 @@
+Final Build Directive — Read This Before You Start
+
+Do not remove the Discord-inspired UI. Keep the dark theme, collapsible sidebar, and circular avatar “bubble” pattern. The homepage must be a normal marketing landing page — not a park page.
+
+Phase 1 Scope (build exactly this)
+	1.	Homepage (/): LOTP hero, slogan “Defend What’s Local”, CTAs (Join / Sign up, Parks & Teams →).
+	2.	Sidebar: left collapsible (mobile drawer), accessible, every link navigates using client-side routing plus anchor fallback.
+	3.	Signup → Park Choice → Auto Badge (FREE only): collect name, email (req), phone (opt), experience.
+	4.	ID Badge (PNG): avatar, Code-128 barcode, Member ID, Park, Join MM/YYYY, LOTP shield + park accent.
+	•	Member ID: LTP-<PARK4>-<000000>
+	•	Barcode payload: LOTP|v1|<member_id>|<park_code>|<issued_at_iso>
+	•	Auto-generate right after park selection; include Download button.
+	5.	Park Page + Bubble Gallery: center park image; avatars ring around it (no overlap on center), lazy-load beyond first 12; mobile grid fallback.
+	6.	Static Export + README: Next.js export to out/; .replit runs start:static. Add “how to keep usage low” notes.
+
+Supabase (client-only)
+	•	Use NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY.
+	•	Buckets: park-images (public read, admin-only write via policies), avatars (public read, users write to avatars/<uid>/*).
+	•	Tables: adapt existing; ensure users(chosen_park_code), parks(center_image_url, colors), badges(...), optional member_counters.
+
+Performance & Cost Rules
+	•	No always-on servers, no dev hot-reload in production.
+	•	Lazy-load images, limit uploads ≤ 2MB, use srcset.
+	•	Aim Lighthouse ≥ 70 (target 80+) for Performance & Accessibility.
+
+Acceptance Criteria (must all pass)
+	•	/ shows LOTP landing (not a park).
+	•	Sidebar is obvious; toggle works; all links navigate (and anchors work with JS off).
+	•	Free signup → choose park → badge auto-generated with correct barcode payload; downloadable PNG.
+	•	Park page displays center image + working bubble layout.
+	•	Static export runs on Replit; README includes usage-saving guidance.
+
+Handoff & QA
+	•	Provide a short screen recording showing: homepage → sidebar → park → signup → park choice → auto badge → download.
+	•	If you hit a true blocker (e.g., missing env vars), post the exact error/log and proceed with unaffected tasks. Otherwise, build per this directive.

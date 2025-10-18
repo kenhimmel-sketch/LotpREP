@@ -1,0 +1,70 @@
+Perfect—here’s a copy-paste reply for the Replit agent that answers every question and locks decisions so they can start building immediately.
+
+⸻
+
+Reply to Replit Agent — FINAL IMPLEMENTATION ANSWERS
+
+Thanks for the careful read. Please proceed with the build using the decisions below. No further clarification is needed unless you hit a blocker.
+
+1) ID Badge Design — Phase 1 spec (build this)
+	•	Include on badge:
+	•	Member photo/avatar (circle).
+	•	Barcode: Code-128.
+	•	Member ID (human-readable).
+	•	Join date (MM/YYYY).
+	•	LOTP shield with park color accent + slogan.
+	•	Do NOT include an expiration date in Phase 1.
+	•	Barcode payload (encode exactly this string):
+LOTP|v1|<member_id>|<park_code>|<issued_at_iso>
+Example: LOTP|v1|LTP-ACAC-000123|acacia|2025-10-17T19:42:00Z
+	•	Member ID format (human-readable):
+LTP-<PARK4>-<six-digit sequence> (zero-padded)
+Examples: LTP-ACAC-000123, LTP-DISC-000007, LTP-VETS-000221, LTP-SUNS-000045
+	•	Implementation: keep a simple member_counters table keyed by park_code and increment atomically on first badge creation; if that’s heavy, fallback to LTP-<PARK4>-<last6 of user_uuid> for MVP.
+	•	Shield layout (digital card, ~640×400px):
+	•	Background black, thin gold border.
+	•	Top stripe uses the park’s accent color (e.g., Discovery blue/lime; Veterans purple/flag accent; Sunset red/black; Acacia black/gold).
+	•	Left: circular avatar. Right: Name, Member ID, Park Name, Join MM/YYYY.
+	•	Bottom-right: Code-128 barcode.
+	•	Small caption: “Defend What’s Local”.
+
+2) Membership Signup — Phase 1 (FREE)
+	•	Collect: name, email (required), phone (optional), experience level (beginner / intermediate / advanced).
+	•	Skip all payments in Phase 1.
+	•	Auto-generate badge immediately after park selection and show it on the profile page (with Download button).
+
+3) Mission Statement — Use verbatim
+
+“Legends of the Park brings local communities together through flag football. Each park has its own team—people sign up to represent their park, build neighborhood pride, and turn wins into real improvements for the community. Join your park, defend what’s local, and become a legend.”
+
+(Primary slogan for hero: “Defend What’s Local”.)
+
+4) Current State — what to keep vs. change
+	•	Keep the existing Discord-style UI (dark theme, circular avatars, collapsible sidebar).
+	•	Fix the sidebar toggle + click navigation so every item works (client-side routing with anchor fallback).
+	•	Replace any “DiscordHome” landing with the proper LOTP homepage at / (marketing hero + CTA).
+	•	Database: Adapt the existing Supabase schema; do not rebuild from scratch. Add the minimal fields/tables (users, parks, badges, member_counters) and indexes as needed.
+
+5) Build Priority — Do in this order
+
+A) Homepage shows LOTP brand (not a park)
+B) Sidebar toggle + links working 100% (desktop + mobile drawer)
+C) Signup → Park selection → Auto badge flow
+D) Bubble gallery on park pages (start with sample data; wire real avatars in Phase 2)
+
+Extra implementation notes (unchanged, please apply)
+	•	Static-first build (Next.js export). Serve static output; no always-on servers.
+	•	Use Supabase client-side for auth & storage; store chosen_park_code on the user.
+	•	Lazy-load avatars; limit upload size (≤2MB) and use srcset.
+	•	Sidebar links: use next/link or router.push, and include <a href="..."> fallback to avoid “does nothing” behavior if JS/hydration fails.
+	•	Badge download: PNG (Phase 1); PDF optional in Phase 2.
+	•	If the counter approach is chosen: create member_counters(park_code TEXT PK, next_no INT) and increment with an atomic UPSERT.
+
+Phase 1 Acceptance (deliver together)
+	1.	/ = LOTP landing (hero + CTA).
+	2.	Sidebar visible/prominent; all buttons navigate correctly.
+	3.	Free signup → choose park → badge auto-generated & shown; barcode scans to the payload above.
+	4.	One park page shows center park image + working bubble layout (no overlap on center).
+	5.	Static export running on Replit; README includes “keep usage low” notes.
+
+Please proceed with Phase 1 now. If you hit a true blocker (e.g., Supabase envs unavailable), report the exact error/log; otherwise continue.
