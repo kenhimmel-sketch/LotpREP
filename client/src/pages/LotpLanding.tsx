@@ -17,13 +17,13 @@ export default function LotpLanding() {
       {/* Header */}
       <header className="border-b border-primary/10 bg-background/95 backdrop-blur">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <img 
               src={logoImage} 
               alt="LOTP" 
               className="w-10 h-10 object-contain"
             />
-            <div className="flex flex-col">
+            <div className="flex flex-col -space-y-0.5">
               <span className="font-bold text-sm text-primary">LOTP</span>
               <span className="text-xs text-muted-foreground">DEFEND WHAT'S LOCAL</span>
             </div>
@@ -42,12 +42,12 @@ export default function LotpLanding() {
           <img 
             src={logoImage} 
             alt="Legends of the Park" 
-            className="w-32 h-32 mx-auto mb-6 object-contain"
+            className="w-32 h-32 mx-auto mb-4 object-contain"
           />
           <h1 className="font-serif text-5xl sm:text-6xl md:text-7xl font-bold text-foreground mb-4">
             Legends of the Park
           </h1>
-          <div className="flex items-center justify-center gap-3 mb-8">
+          <div className="flex items-center justify-center gap-3 mb-6">
             <div className="h-px w-16 bg-primary" />
             <p className="font-montserrat text-2xl sm:text-3xl font-semibold text-primary">
               Defend What's Local
