@@ -1,0 +1,16 @@
+<svg width="240" height="240" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="discoveryTitle discoveryDesc">
+  <title id="discoveryTitle">Discovery Park Defenders Crest</title>
+  <desc id="discoveryDesc">A sleek compass and telescope motif in gold on black</desc>
+  <defs>
+    <radialGradient id="discoveryGold" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#ffe8a3" />
+      <stop offset="100%" stop-color="#c9922a" />
+    </radialGradient>
+  </defs>
+  <rect x="20" y="30" width="200" height="180" rx="36" fill="#050507" stroke="url(#discoveryGold)" stroke-width="6" />
+  <circle cx="120" cy="120" r="56" fill="none" stroke="url(#discoveryGold)" stroke-width="5" stroke-dasharray="8 6" />
+  <path d="M120 60l12 34 36 12-36 12-12 34-12-34-36-12 36-12 12-34z" fill="url(#discoveryGold)" opacity="0.85" />
+  <rect x="104" y="92" width="32" height="72" rx="12" fill="#050507" stroke="url(#discoveryGold)" stroke-width="4" />
+  <path d="M120 92c16 0 28 12 28 28s-12 28-28 28-28-12-28-28 12-28 28-28z" fill="#050507" />
+  <path d="M120 104c10 0 18 8 18 18 0 8-5 15-12 17l6 23h-24l6-23c-7-2-12-9-12-17 0-10 8-18 18-18z" fill="url(#discoveryGold)" />
+</svg>

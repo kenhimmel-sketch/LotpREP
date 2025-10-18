@@ -1,0 +1,16 @@
+<svg width="240" height="240" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="vetsTitle vetsDesc">
+  <title id="vetsTitle">Veterans Memorial Park Vampires Crest</title>
+  <desc id="vetsDesc">A midnight badge with wings, moon and star in gold</desc>
+  <defs>
+    <linearGradient id="vetsEdge" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f3cf6b" />
+      <stop offset="100%" stop-color="#c98d25" />
+    </linearGradient>
+  </defs>
+  <path d="M120 18c-48 0-90 14-90 38v66c0 60 58 100 90 100s90-40 90-100V56c0-24-42-38-90-38z" fill="#09080b" stroke="url(#vetsEdge)" stroke-width="6" />
+  <path d="M76 128c14-18 28-28 44-28s30 10 44 28l-20 8c-6-8-14-12-24-12s-18 4-24 12l-20-8z" fill="url(#vetsEdge)" opacity="0.8" />
+  <path d="M120 82c18 0 32 12 32 30s-14 30-32 30-32-12-32-30 14-30 32-30z" fill="#09080b" stroke="url(#vetsEdge)" stroke-width="4" />
+  <path d="M120 94c11 0 20 8 20 18 0 10-9 18-20 18s-20-8-20-18c0-10 9-18 20-18z" fill="url(#vetsEdge)" />
+  <circle cx="92" cy="68" r="10" fill="url(#vetsEdge)" />
+  <path d="M148 58l22-8-4 24 18 12-22 6-6 22-12-18-24 4 14-20-10-22 24 4z" fill="url(#vetsEdge)" opacity="0.85" />
+</svg>
