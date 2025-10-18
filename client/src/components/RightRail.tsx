@@ -14,10 +14,10 @@ interface RightRailProps {
 }
 
 const parkInfo: Record<string, { name: string; image: string }> = {
-  "acacia-park-avengers": { name: "Acacia Park", image: logoImage },
-  "discovery-park-defenders": { name: "Discovery Park", image: logoImage },
-  "veterans-park-vipers": { name: "Veterans Park", image: logoImage },
-  "sunset-park-scorpions": { name: "Sunset Park", image: logoImage },
+  "acacia-park-avengers": { name: "Acacia Park Avengers", image: logoImage },
+  "discovery-park-defenders": { name: "Discovery Park Defenders", image: logoImage },
+  "veterans-park-vipers": { name: "Veterans Park Vipers", image: logoImage },
+  "sunset-park-scorpions": { name: "Sunset Park Scorpions", image: logoImage },
 };
 
 export function RightRail({ selectedPark, onChoosePark, onJoinPark }: RightRailProps) {

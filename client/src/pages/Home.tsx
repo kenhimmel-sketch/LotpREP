@@ -29,18 +29,18 @@ export default function Home() {
       slug: "discovery-park-defenders",
     },
     {
-      name: "Sunset Park Scorpions",
-      park: "Sunset Park",
-      image: scorpionsImage,
-      colors: "Crimson Red & Black",
-      slug: "sunset-park-scorpions",
-    },
-    {
       name: "Veterans Park Vipers",
       park: "Veterans Memorial Park",
       image: avengersActionImage,
       colors: "Navy Blue & Gold",
       slug: "veterans-park-vipers",
+    },
+    {
+      name: "Sunset Park Scorpions",
+      park: "Sunset Park",
+      image: scorpionsImage,
+      colors: "Crimson Red & Black",
+      slug: "sunset-park-scorpions",
     },
   ];
 
@@ -103,7 +103,7 @@ export default function Home() {
             Each team represents and honors a local Nevada park, building community pride through athletic excellence and sportsmanship.
           </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-4xl mx-auto">
             {teams.map((team) => (
               <TeamCard key={team.slug} {...team} />
             ))}

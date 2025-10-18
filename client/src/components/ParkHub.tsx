@@ -17,22 +17,22 @@ const parkData: Record<string, { name: string; image: string; color: string }> =
   "acacia-park-avengers": {
     name: "Acacia Park Avengers",
     image: acaciaImage,
-    color: "#2a5434",
+    color: "#2a5434", // Forest green
   },
   "discovery-park-defenders": {
     name: "Discovery Park Defenders",
-    image: logoImage, // Using logo as fallback
-    color: "#1e40af",
+    image: logoImage,
+    color: "#1e40af", // Royal blue
   },
   "veterans-park-vipers": {
     name: "Veterans Park Vipers",
-    image: logoImage, // Using logo as fallback
-    color: "#581c87",
+    image: logoImage,
+    color: "#581c87", // Purple
   },
   "sunset-park-scorpions": {
     name: "Sunset Park Scorpions",
-    image: logoImage, // Using logo as fallback
-    color: "#991b1b",
+    image: logoImage,
+    color: "#991b1b", // Crimson red
   },
 };
 

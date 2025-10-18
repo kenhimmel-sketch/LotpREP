@@ -151,7 +151,7 @@ export function AppSidebar({ selectedPark, onParkSelect }: AppSidebarProps) {
         <SidebarGroup>
           <div className="px-3 py-2">
             <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-              Parks (Season One)
+              Parks (4 Teams)
             </h3>
           </div>
           <SidebarGroupContent className="px-2">

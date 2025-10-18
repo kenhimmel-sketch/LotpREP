@@ -36,6 +36,16 @@ export default function Footer() {
                   Defenders
                 </Link>
               </li>
+              <li>
+                <Link href="/teams/veterans-park-vipers" className="text-sm text-muted-foreground hover:text-primary transition-colors" data-testid="link-footer-vipers">
+                  Vipers
+                </Link>
+              </li>
+              <li>
+                <Link href="/teams/sunset-park-scorpions" className="text-sm text-muted-foreground hover:text-primary transition-colors" data-testid="link-footer-scorpions">
+                  Scorpions
+                </Link>
+              </li>
             </ul>
           </div>
 
