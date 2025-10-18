@@ -3,6 +3,8 @@ import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import LotpLanding from "@/pages/LotpLanding";
+import ParksPage from "@/pages/ParksPage";
 import DiscordHome from "@/pages/DiscordHome";
 import TeamPage from "@/pages/TeamPage";
 import NotFound from "@/pages/not-found";
@@ -10,7 +12,9 @@ import NotFound from "@/pages/not-found";
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={DiscordHome} />
+      <Route path="/" component={LotpLanding} />
+      <Route path="/parks" component={ParksPage} />
+      <Route path="/home" component={DiscordHome} />
       <Route path="/teams/:slug" component={TeamPage} />
       <Route component={NotFound} />
     </Switch>

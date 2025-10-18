@@ -41,6 +41,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get all parks
+  app.get("/api/parks", async (req, res) => {
+    try {
+      const parks = await storage.getAllParks();
+      res.json(parks);
+    } catch (error: any) {
+      console.error("Error getting parks:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Get single park by code
+  app.get("/api/parks/:parkCode", async (req, res) => {
+    try {
+      const { parkCode } = req.params;
+      const park = await storage.getParkByCode(parkCode);
+      if (!park) {
+        return res.status(404).json({ error: "Park not found" });
+      }
+      res.json(park);
+    } catch (error: any) {
+      console.error("Error getting park:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   // Join a park (requires authentication)
   app.post("/api/parks/:parkId/join", isAuthenticated, async (req: any, res) => {
     try {

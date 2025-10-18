@@ -11,6 +11,9 @@ import {
   parkStats,
   type ParkStats,
   type InsertParkStats,
+  parks,
+  type Park,
+  type InsertPark,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, or, and } from "drizzle-orm";
@@ -23,6 +26,11 @@ export interface IStorage {
   // Team signup operations
   createTeamSignup(signup: InsertTeamSignup): Promise<TeamSignup>;
   getTeamSignups(teamId: string): Promise<TeamSignup[]>;
+  
+  // Park operations
+  getAllParks(): Promise<Park[]>;
+  getParkByCode(parkCode: string): Promise<Park | undefined>;
+  createPark(park: InsertPark): Promise<Park>;
   
   // User profile operations
   getUserProfile(userId: string): Promise<UserProfile | undefined>;
@@ -90,6 +98,27 @@ export class DbStorage implements IStorage {
       .select()
       .from(teamSignups)
       .where(eq(teamSignups.teamId, teamId));
+  }
+
+  // Park operations
+  async getAllParks(): Promise<Park[]> {
+    return await db.select().from(parks);
+  }
+
+  async getParkByCode(parkCode: string): Promise<Park | undefined> {
+    const [park] = await db
+      .select()
+      .from(parks)
+      .where(eq(parks.parkCode, parkCode));
+    return park;
+  }
+
+  async createPark(park: InsertPark): Promise<Park> {
+    const [newPark] = await db
+      .insert(parks)
+      .values(park)
+      .returning();
+    return newPark;
   }
 
   // User profile operations

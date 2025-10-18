@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { index, jsonb, pgTable, text, timestamp, varchar } from "drizzle-orm/pg-core";
+import { boolean, index, integer, jsonb, pgTable, text, timestamp, varchar } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -21,6 +21,10 @@ export const users = pgTable("users", {
   firstName: varchar("first_name"),
   lastName: varchar("last_name"),
   profileImageUrl: varchar("profile_image_url"),
+  phone: varchar("phone"),
+  experience: varchar("experience"), // beginner, intermediate, advanced
+  chosenParkCode: varchar("chosen_park_code"),
+  isAdmin: boolean("is_admin").default(false),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -91,3 +95,56 @@ export const insertParkStatsSchema = createInsertSchema(parkStats).omit({
 
 export type InsertParkStats = z.infer<typeof insertParkStatsSchema>;
 export type ParkStats = typeof parkStats.$inferSelect;
+
+// Parks table for storing park/team information
+export const parks = pgTable("parks", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  parkCode: varchar("park_code").notNull().unique(), // acacia, discovery, veterans, sunset
+  name: varchar("name").notNull(),
+  description: text("description"),
+  city: varchar("city"),
+  centerImageUrl: varchar("center_image_url"),
+  iconUrl: varchar("icon_url"),
+  colorPrimary: varchar("color_primary"), // Main team color
+  colorSecondary: varchar("color_secondary"), // Accent color
+  tagline: varchar("tagline"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertParkSchema = createInsertSchema(parks).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertPark = z.infer<typeof insertParkSchema>;
+export type Park = typeof parks.$inferSelect;
+
+// Member counters for generating sequential member IDs per park
+export const memberCounters = pgTable("member_counters", {
+  parkCode: varchar("park_code").primaryKey(),
+  nextNumber: integer("next_number").notNull().default(1),
+});
+
+export const insertMemberCounterSchema = createInsertSchema(memberCounters);
+
+export type InsertMemberCounter = z.infer<typeof insertMemberCounterSchema>;
+export type MemberCounter = typeof memberCounters.$inferSelect;
+
+// Badges table for digital ID badges
+export const badges = pgTable("badges", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id),
+  parkCode: varchar("park_code").notNull(),
+  memberId: varchar("member_id").notNull().unique(), // LTP-PARK4-000123
+  displayName: varchar("display_name").notNull(),
+  issuedAt: timestamp("issued_at").defaultNow(),
+  badgeData: jsonb("badge_data"), // Additional badge metadata
+});
+
+export const insertBadgeSchema = createInsertSchema(badges).omit({
+  id: true,
+  issuedAt: true,
+});
+
+export type InsertBadge = z.infer<typeof insertBadgeSchema>;
+export type Badge = typeof badges.$inferSelect;
