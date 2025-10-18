@@ -52,6 +52,11 @@ export class DbStorage implements IStorage {
     return user;
   }
 
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.email, email));
+    return user;
+  }
+
   async upsertUser(userData: UpsertUser): Promise<User> {
     const existingUsers = await db
       .select()
@@ -82,6 +87,18 @@ export class DbStorage implements IStorage {
         .returning();
       return user;
     }
+  }
+
+  async updateUserParkChoice(email: string, parkCode: string): Promise<User> {
+    const [user] = await db
+      .update(users)
+      .set({
+        chosenParkCode: parkCode,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.email, email))
+      .returning();
+    return user;
   }
 
   // Team signup operations

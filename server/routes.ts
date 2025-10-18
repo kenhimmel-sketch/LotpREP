@@ -20,6 +20,82 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Free signup endpoint (no auth required)
+  app.post("/api/signup", async (req, res) => {
+    try {
+      const { firstName, lastName, email, phone, experience } = req.body;
+      
+      // Validate required fields
+      if (!firstName || !lastName || !email || !experience) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+
+      // Create or update user (upsert by email)
+      const user = await storage.upsertUser({
+        email,
+        firstName,
+        lastName,
+        phone: phone || null,
+        experience,
+      });
+
+      res.json({ success: true, user });
+    } catch (error: any) {
+      console.error("Signup error:", error);
+      res.status(500).json({ error: error.message || "Failed to create account" });
+    }
+  });
+
+  // Choose park endpoint (saves park choice to user profile)
+  app.post("/api/choose-park", async (req, res) => {
+    try {
+      const { parkCode, email } = req.body;
+      
+      if (!parkCode || !email) {
+        return res.status(400).json({ error: "Park code and email are required" });
+      }
+
+      // Verify park exists
+      const park = await storage.getParkByCode(parkCode);
+      if (!park) {
+        return res.status(404).json({ error: "Park not found" });
+      }
+
+      // Get user by email
+      const user = await storage.getUserByEmail(email);
+      if (!user) {
+        return res.status(404).json({ error: "User not found. Please sign up first." });
+      }
+
+      // Update user's chosen park in users table
+      await storage.updateUserParkChoice(email, parkCode);
+
+      // Create user profile with park association
+      // First check if profile already exists for this user/park combo
+      const existingProfile = await storage.getUserProfileByPark(user.id, park.id);
+      
+      let profile;
+      if (existingProfile) {
+        // Update existing profile
+        profile = await storage.updateUserProfile(existingProfile.id, {
+          parkId: park.id,
+        });
+      } else {
+        // Create new profile
+        profile = await storage.createUserProfile({
+          userId: user.id,
+          parkId: park.id,
+          role: "member",
+        });
+      }
+
+      res.json({ success: true, user, park, profile });
+    } catch (error: any) {
+      console.error("Choose park error:", error);
+      res.status(500).json({ error: error.message || "Failed to choose park" });
+    }
+  });
+
   // Test route to create a team signup
   app.post("/api/team-signups", async (req, res) => {
     try {
