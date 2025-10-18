@@ -1,9 +1,10 @@
 import { Link, useLocation } from "wouter";
-import { Shield, Menu, X, LogOut } from "lucide-react";
+import { Shield, Menu, X, LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import ShareCodeDialog from "@/components/ShareCodeDialog";
 
 export default function Header() {
   const [location] = useLocation();
@@ -20,6 +21,12 @@ export default function Header() {
 
   const handleLogout = () => {
     window.location.href = "/api/logout";
+  };
+
+  // Placeholder for handleLogin if it were implemented
+  const handleLogin = () => {
+    console.log("Login button clicked");
+    // Typically this would redirect to a login page or trigger a login flow
   };
 
   return (

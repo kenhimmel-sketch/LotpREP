@@ -220,6 +220,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Share code endpoint
+  const { getShareCode } = await import("./shareCode");
+  app.get("/api/share-code/:filePath", getShareCode);
+
   // Get user's park membership
   app.get("/api/user/profile", isAuthenticated, async (req: any, res) => {
     try {
