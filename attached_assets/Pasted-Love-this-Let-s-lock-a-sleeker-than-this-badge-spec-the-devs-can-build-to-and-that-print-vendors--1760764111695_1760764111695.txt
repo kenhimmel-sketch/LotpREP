@@ -1,0 +1,125 @@
+Love this. Let’s lock a “sleeker-than-this” badge spec the devs can build to—and that print vendors can use later. Copy-paste the parts labeled “FOR REPLIT” into the agent chat.
+
+⸻
+
+Badge v1.1 — Design & Build Spec (Portrait)
+
+Look & vibe
+	•	Black base, rich gold accents, tiny green micro-accent (only for separators or microtext).
+	•	Clean, premium, minimal. Serif headline + modern sans for data.
+	•	Circular photo with a thin gold ring; strong hierarchy on the right.
+
+Dimensions
+	•	Portrait CR80 (credit-card) ratio
+	•	Print @300 dpi: 637 × 1011 px (add 38 px bleed on all sides).
+	•	Screen/PNG export: 954 × 1518 px (1.5× for retina crispness).
+	•	Safe area: 24 px inset from final trim.
+
+Colors (tokens)
+	•	--black: #000000
+	•	--gold: #D4AF37 (foil/metallic in print; gradient in digital ok)
+	•	--gold-dark: #A88427
+	•	--green-accent: #2EB67D (sparingly)
+	•	Park accents:
+	•	Acacia: --park:#D4AF37
+	•	Discovery: --park:#1E88E5 & --park-2:#8BC34A
+	•	Veterans: --park:#6A1B9A (+ subtle navy/red stripe allowed)
+	•	Sunset: --park:#C62828
+
+Typography
+	•	Headline (brand): Cinzel (or Trajan-style), tracking +8.
+	•	Data: Inter (or Source Sans 3).
+	•	Mono for ID line: Roboto Mono/JetBrains Mono for easy manual reading.
+
+Type scale (portrait)
+	•	“LEGENDS OF THE PARK”: 44–48 px, gold.
+	•	Tagline: 14 px, uppercase, muted gold.
+	•	Name: 28–32 px, gold, bold.
+	•	Role: 14–16 px, semi-bold, white.
+	•	Labels (left column): 12 px, 70% white.
+	•	Values (right column): 14 px, 90% white.
+	•	ID at bottom bar: 16 px mono.
+
+Layout grid
+	•	Left column (photo): 240 px circle, 2 px gold ring, top aligned.
+	•	Right column (text): name → role → 2-column spec list.
+	•	Spec pairs (example):
+	•	Park Code → P-ACAC
+	•	Member ID → LTP-ACAC-000123
+	•	Join → 10/2025
+	•	Role → Park Leader
+	•	Bottom bar (barcode band): 128 px tall, gold background with black bars; black caption ID centered below bars.
+
+Barcode (required)
+	•	Format: Code-128.
+	•	Payload (exact): LOTP|v1|<member_id>|<park_code>|<issued_at_iso>
+	•	Quiet zone: ≥ 10× module width on left/right; module width 2–3 px; height ≥ 48 px.
+	•	Human-readable line: same Member ID printed under the bars (mono).
+
+Optional QR (Phase 2)
+	•	24 mm square, top-right; links to the member profile or park landing. Not needed in Phase 1.
+
+Finishing (print vendors, Phase 2)
+	•	Matte PVC with gold foil on brand title + ring, or spot metallic ink.
+	•	Microtext “DEFEND WHAT’S LOCAL” as a faint ring around the photo.
+	•	Optional UV watermark of the LOTP shield.
+
+Privacy rule (important)
+	•	Do not display DOB or street address on member badges. Keep: Name, Role, Park Code, Member ID, Join month/year. (Your mock showed DOB/address—let’s not ship those.)
+
+⸻
+
+FOR REPLIT — Badge Generator build notes
+	1.	Canvas export
+
+	•	Render @ 954×1518 px (1.5×) then export PNG; keep a print preset (637×1011 @300 dpi) for vendors later.
+	•	Clip the photo to a circle; draw 2 px gold ring.
+	•	Title stack: brand → tagline; park accent stripe just under the title (2–3 px).
+	•	Two-column details list with even baselines; use thin gold separators (rgba(212,175,55,.18)).
+
+	2.	Brand & fonts
+
+	•	Load Cinzel (headline), Inter (data), Roboto Mono (ID).
+	•	Ensure contrast: white on black ≥ 4.5:1; gold text only in large or headline sizes.
+
+	3.	Member ID sequencing
+
+	•	Table member_counters(park_code text pk, next_no int default 1).
+	•	RPC next_member_no(p_code) (atomic increment).
+	•	ID format: LTP-<PARK4>-<000000>
+	•	acacia → ACAC, discovery → DISC, veterans → VETS, sunset → SUNS.
+
+	4.	Barcode
+
+	•	Use jsbarcode on an offscreen canvas, then drawImage onto the bottom band.
+	•	Verify quiet zones; center the human-readable ID under the bars.
+
+	5.	Config flags
+
+	•	orientation: 'portrait' | 'landscape' (portrait default).
+	•	showQR: boolean (default false).
+	•	showRole: boolean (default true).
+	•	parkAccent: hex from tokens.
+
+	6.	Output
+
+	•	Button: Download PNG (filename LOTP_<member_id>.png).
+	•	Store a small thumbnail (300 px tall) to Supabase Storage for quick listing.
+
+	7.	QA for the badge
+
+	•	Scan barcode on 3 apps (iOS/Android); confirm payload string.
+	•	Verify no crop of quiet zones at export.
+	•	Name wraps to 2 lines max; ellipsis beyond.
+
+⸻
+
+Tiny visual upgrades (to beat the mock)
+	•	Switch the barcode caption to mono and notch it into the band with a 1 px black hairline above.
+	•	Add a 1 px inner frame (very faint gold) around the whole card.
+	•	Use a subtle diagonal noise texture at 3–4% opacity on the black background (more tactile, still clean).
+	•	Add a micro-accent green dot separator between role and join date—brand-consistent but understated.
+
+⸻
+
+If you want, I can also spit out a single “badge.json design map” your generator reads (all measurements in px) so the dev just paints by numbers.

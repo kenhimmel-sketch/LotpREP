@@ -1,0 +1,43 @@
+Great progress. Here’s a clean, copy-paste reply for your Replit agent that (a) approves what’s done, (b) locks the canon, and (c) gives precise next actions + tiny nits so they don’t drift.
+
+⸻
+
+Reply to Replit Agent — Status Review & Go-Ahead
+
+Nice start. The LOTP landing page and /parks listing look good. Proceed with Phase 1 exactly as below.
+
+Canon (lock this in)
+	•	Slogan (hero): “Defend What’s Local.”
+	•	Mission statement (modal/text):
+“Legends of the Park brings local communities together through flag football. Each park has its own team—people sign up to represent their park, build neighborhood pride, and turn wins into real improvements for the community. Join your park, defend what’s local, and become a legend.”
+	•	Teams / colors (use these names exactly):
+	1.	Acacia Park Avengers — black + gold
+	2.	Discovery Park Defenders — blue + lime green
+	3.	Veterans Memorial Park Vipers — purple + (flag accent: navy/red allowed tastefully)
+	4.	Sunset Park Scorpions — red + black
+
+(If you already printed different names, update them now so we don’t rework later.)
+
+Small UX nits to fix while you go
+	•	Mission dialog: don’t block page scroll; ESC closes; focus returns to trigger.
+	•	Spacing rule: no extra top margin before hero/park images.
+	•	Parks cards: show team name + park name; color accents should match the canon above.
+	•	“Choose Your Park” → goes to /signup (free), not to /parks.
+
+Next tasks (same priority as before)
+	1.	Sidebar toggle & links — must work on desktop + mobile; client-side routing and <a href> fallback. Add a temporary console.log('sidebar click', href) for QA.
+	2.	Signup (FREE) — name, email (req), phone (opt), experience; store chosen_park_code.
+	3.	Auto-badge after park choice — PNG download; includes avatar, Code-128 barcode, Member ID, Park, Join MM/YYYY, shield + park accent.
+	•	Member ID: LTP-<PARK4>-<000000>
+	•	Barcode payload: LOTP|v1|<member_id>|<park_code>|<issued_at_iso>
+	4.	Bubble gallery — center park image; avatars ring (no overlap); lazy-load >12; mobile grid fallback.
+	5.	Static export — next export -o out; .replit runs start:static; no always-on servers.
+
+Quick QA before you show me
+	•	Clicking every sidebar item navigates (and still works with JS disabled).
+	•	Sign up → choose park → badge auto-renders; barcode scans to the payload above.
+	•	One park page shows the working ring layout.
+	•	Lighthouse ≥ 70 for Perf & A11y (target 80+).
+	•	README includes “how to keep Replit usage low”.
+
+Share a short screen recording of: Home → Sidebar → Park → Signup → Park choice → Auto badge → Download. If you hit a real blocker (env vars, DB access), post the exact error/log; otherwise continue building.
