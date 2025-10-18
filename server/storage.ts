@@ -14,9 +14,13 @@ import {
   parks,
   type Park,
   type InsertPark,
+  memberCounters,
+  badges,
+  type Badge,
+  type InsertBadge,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, or, and } from "drizzle-orm";
+import { eq, or, and, sql } from "drizzle-orm";
 
 export interface IStorage {
   // User operations for Replit Auth
@@ -136,6 +140,58 @@ export class DbStorage implements IStorage {
       .values(park)
       .returning();
     return newPark;
+  }
+
+  // Generate next member ID for a park (atomic increment)
+  async generateMemberId(parkCode: string): Promise<string> {
+    // Park code to 4-letter abbreviation
+    const parkCodeMap: Record<string, string> = {
+      acacia: "ACAC",
+      discovery: "DISC",
+      veterans: "VETS",
+      sunset: "SUNS",
+    };
+
+    const parkAbbrev = parkCodeMap[parkCode.toLowerCase()] || parkCode.toUpperCase().slice(0, 4);
+
+    // Atomic increment - update and return in one query
+    const [counter] = await db
+      .update(memberCounters)
+      .set({
+        nextNumber: sql`${memberCounters.nextNumber} + 1`,
+      })
+      .where(eq(memberCounters.parkCode, parkCode))
+      .returning();
+
+    if (!counter) {
+      // Initialize counter if it doesn't exist
+      const [newCounter] = await db
+        .insert(memberCounters)
+        .values({ parkCode, nextNumber: 2 }) // Start at 2 since we're using 1
+        .returning();
+      return `LTP-${parkAbbrev}-${String(1).padStart(6, "0")}`;
+    }
+
+    // Format: LTP-PARK4-000001
+    const memberNumber = counter.nextNumber - 1; // Use the value before increment
+    return `LTP-${parkAbbrev}-${String(memberNumber).padStart(6, "0")}`;
+  }
+
+  // Badge operations
+  async createBadge(badgeData: InsertBadge): Promise<Badge> {
+    const [badge] = await db
+      .insert(badges)
+      .values(badgeData)
+      .returning();
+    return badge;
+  }
+
+  async getBadgeByUserId(userId: string): Promise<Badge | undefined> {
+    const [badge] = await db
+      .select()
+      .from(badges)
+      .where(eq(badges.userId, userId));
+    return badge;
   }
 
   // User profile operations

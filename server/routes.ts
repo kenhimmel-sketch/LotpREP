@@ -46,6 +46,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get badge by user email
+  app.get("/api/badge", async (req, res) => {
+    try {
+      const { email } = req.query;
+      
+      if (!email || typeof email !== "string") {
+        return res.status(400).json({ error: "Email is required" });
+      }
+
+      // Get user by email
+      const user = await storage.getUserByEmail(email);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      // Get badge
+      const badge = await storage.getBadgeByUserId(user.id);
+      if (!badge) {
+        return res.status(404).json({ error: "Badge not found. Please choose a park first." });
+      }
+
+      res.json(badge);
+    } catch (error: any) {
+      console.error("Get badge error:", error);
+      res.status(500).json({ error: error.message || "Failed to get badge" });
+    }
+  });
+
   // Choose park endpoint (saves park choice to user profile)
   app.post("/api/choose-park", async (req, res) => {
     try {
@@ -65,6 +93,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const user = await storage.getUserByEmail(email);
       if (!user) {
         return res.status(404).json({ error: "User not found. Please sign up first." });
+      }
+
+      // Check if badge already exists
+      let badge = await storage.getBadgeByUserId(user.id);
+      
+      if (!badge) {
+        // Generate member ID
+        const memberId = await storage.generateMemberId(parkCode);
+
+        // Create badge record
+        badge = await storage.createBadge({
+          userId: user.id,
+          parkCode: parkCode,
+          memberId: memberId,
+          displayName: `${user.firstName} ${user.lastName}`,
+          badgeData: {
+            parkName: park.name,
+            parkColor: park.colorPrimary,
+            role: "Member",
+          },
+        });
       }
 
       // Update user's chosen park in users table
@@ -89,7 +138,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      res.json({ success: true, user, park, profile });
+      res.json({ success: true, user, park, profile, badge });
     } catch (error: any) {
       console.error("Choose park error:", error);
       res.status(500).json({ error: error.message || "Failed to choose park" });
