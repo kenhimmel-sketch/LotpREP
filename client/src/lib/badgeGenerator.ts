@@ -94,7 +94,7 @@ export async function generateBadge(badgeData: BadgeData): Promise<string> {
   ctx.strokeRect(12, 12, WIDTH - 24, HEIGHT - 24);
 
   // === TOP SECTION: BRANDING ===
-  const topMargin = 60;
+  const topMargin = 48;
 
   // Title: "LEGENDS OF THE PARK"
   ctx.fillStyle = GOLD;
@@ -107,16 +107,16 @@ export async function generateBadge(badgeData: BadgeData): Promise<string> {
   ctx.fillStyle = `${GOLD}AA`; // Muted gold
   ctx.font = "400 14px Inter";
   ctx.letterSpacing = "2px";
-  ctx.fillText("DEFEND WHAT'S LOCAL", WIDTH / 2, topMargin + 30);
+  ctx.fillText("DEFEND WHAT'S LOCAL", WIDTH / 2, topMargin + 26);
 
   // Park accent stripe (2px under title)
   ctx.fillStyle = PARK_COLOR;
-  ctx.fillRect(WIDTH / 2 - 200, topMargin + 45, 400, 3);
+  ctx.fillRect(WIDTH / 2 - 200, topMargin + 38, 400, 3);
 
   // === MIDDLE SECTION: PHOTO + INFO ===
-  const contentTop = topMargin + 80;
+  const contentTop = topMargin + 60;
   const photoSize = 240;
-  const photoX = 80;
+  const photoX = 60;
   const photoY = contentTop;
 
   // Draw circular photo with gold ring
@@ -187,8 +187,8 @@ export async function generateBadge(badgeData: BadgeData): Promise<string> {
   ctx.stroke();
 
   // === RIGHT COLUMN: TEXT INFO ===
-  const textX = photoX + photoSize + 60;
-  const textStartY = contentTop + 20;
+  const textX = photoX + photoSize + 45;
+  const textStartY = contentTop + 10;
 
   // Member Name
   ctx.fillStyle = GOLD;
@@ -203,13 +203,13 @@ export async function generateBadge(badgeData: BadgeData): Promise<string> {
   // Role
   ctx.fillStyle = "#FFFFFF";
   ctx.font = "600 16px Inter";
-  ctx.fillText(badgeData.role.toUpperCase(), textX, textStartY + nameLines.length * 38 + 30);
+  ctx.fillText(badgeData.role.toUpperCase(), textX, textStartY + nameLines.length * 38 + 24);
 
   // Two-column spec list
-  const specStartY = textStartY + nameLines.length * 38 + 70;
+  const specStartY = textStartY + nameLines.length * 38 + 56;
   const labelStyle = "400 12px Inter";
   const valueStyle = "400 14px Inter";
-  const lineHeight = 32;
+  const lineHeight = 28;
 
   const specs = [
     { label: "PARK CODE", value: PARK_CODE_MAP[badgeData.parkCode] || badgeData.parkCode.toUpperCase() },
@@ -248,7 +248,7 @@ export async function generateBadge(badgeData: BadgeData): Promise<string> {
   });
 
   // === BOTTOM SECTION: BARCODE BAND ===
-  const barcodeHeight = 128;
+  const barcodeHeight = 115;
   const barcodeY = HEIGHT - barcodeHeight;
 
   // Gold background band
@@ -264,28 +264,28 @@ export async function generateBadge(badgeData: BadgeData): Promise<string> {
   JsBarcode(barcodeCanvas, barcodePayload, {
     format: "CODE128",
     width: 3,
-    height: 60,
+    height: 55,
     displayValue: false,
-    margin: 10,
+    margin: 8,
   });
 
   // Draw barcode on badge
   const barcodeImgX = WIDTH / 2 - barcodeCanvas.width / 2;
-  const barcodeImgY = barcodeY + 20;
+  const barcodeImgY = barcodeY + 16;
   ctx.drawImage(barcodeCanvas, barcodeImgX, barcodeImgY);
 
   // Human-readable ID under barcode with hairline above
   ctx.strokeStyle = BLACK;
   ctx.lineWidth = 1;
   ctx.beginPath();
-  ctx.moveTo(barcodeImgX, barcodeImgY + 70);
-  ctx.lineTo(barcodeImgX + barcodeCanvas.width, barcodeImgY + 70);
+  ctx.moveTo(barcodeImgX, barcodeImgY + 63);
+  ctx.lineTo(barcodeImgX + barcodeCanvas.width, barcodeImgY + 63);
   ctx.stroke();
 
   ctx.fillStyle = BLACK;
   ctx.font = "400 16px 'Roboto Mono'";
   ctx.textAlign = "center";
-  ctx.fillText(badgeData.memberId, WIDTH / 2, barcodeImgY + 90);
+  ctx.fillText(badgeData.memberId, WIDTH / 2, barcodeImgY + 82);
 
   // Convert to PNG
   return canvas.toDataURL("image/png");
